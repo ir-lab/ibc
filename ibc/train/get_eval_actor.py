@@ -15,6 +15,7 @@
 
 """Defines an eval actor."""
 import os
+import csv
 
 from absl import logging
 from ibc.environments.d4rl import metrics as d4rl_metrics
@@ -24,8 +25,14 @@ from tf_agents.train import actor
 
 
 def log_episode_complete(traj):
-  if traj.is_boundary():
-    logging.info('Completed episode.')
+  #import pdb; pdb.set_trace()
+  with open('./action_car2.csv','a') as csvfile:
+    writer = csv.writer(csvfile)
+    writer.writerow(traj)
+    if traj.is_boundary():
+      logging.info('Completed episode.')
+      writer.writerow("completed")
+
 
 
 def get_eval_actor(agent,
@@ -46,7 +53,7 @@ def get_eval_actor(agent,
         agent.policy, strategy=strategy)
 
   metrics = actor.eval_metrics(eval_episodes)
-  if env_name in tasks.D4RL_TASKS:
+  if env_name in tasks.D4RL_TASKS or env_name in tasks.GYM_TASKS:
     success_metric = metrics[0]
     if env_name in tasks.ADROIT_TASKS:
       # Define custom eval success metric for Adroit tasks, since the rewards

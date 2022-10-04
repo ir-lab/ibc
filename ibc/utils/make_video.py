@@ -24,7 +24,6 @@ except ImportError:
 from ibc.ibc.utils import strategy_policy  # pylint: disable=g-import-not-at-top
 from tf_agents.drivers import py_driver
 
-
 def make_video(agent, env, root_dir, step, strategy):
   """Creates a video of a single rollout from the current policy."""
   policy = strategy_policy.StrategyPyTFEagerPolicy(
@@ -44,3 +43,5 @@ def make_video(agent, env, root_dir, step, strategy):
   driver.run(time_step, initial_policy_state)
   video_env.close()  # Closes only the video env, not the underlying env.
   logging.info('Wrote video for step %d to %s', step, video_path)
+
+
