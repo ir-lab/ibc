@@ -1,0 +1,14 @@
+absl_py
+gin
+gin_config
+gym==0.25.1
+keras>2.3,<2.9
+matplotlib
+numpy
+opencv_python
+pybullet
+scipy
+tensorflow>2.3,<2.9
+tensorflow_probability<0.17
+tf_agents>0.6,<0.13
+tqdm
