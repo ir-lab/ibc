@@ -2,7 +2,7 @@
 
 # Use name of d4rl env as first arg
 
-CMD='python3 ibc/ibc/test_eval.py '
+CMD='python3 ibc/ibc/train_test.py '
 GIN='ibc/ibc/configs/d4rl/mlp_ebm_test.gin'
 #GIN='ibc/ibc/configs/d4rl/test_run.gin'
 DATA="train_eval.dataset_path='ibc/data/d4rl/car2/*.tfrecord'"
