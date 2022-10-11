@@ -65,7 +65,6 @@ def get_data_fns(dataset_path,
       train_data = train_data.map(norm_function)
       if eval_data:
         eval_data = eval_data.map(norm_function)
-
     return train_data, eval_data
 
   return create_train_and_eval_fns

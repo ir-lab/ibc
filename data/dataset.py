@@ -145,9 +145,9 @@ def load_tfrecord_dataset_sequence(path_to_shards,
     specs.append(dataset_spec)
     if not all([dataset_spec == spec for spec in specs]):
       raise ValueError('One or more of the encoding specs do not match.')
+  import pdb; pdb.set_trace()
   decoder = example_encoding.get_example_decoder(specs[0], batched=True,
                                                  compress_image=compress_image)
-
   # Note: window cannot be called on TFRecordDataset(shards) directly as it
   # interleaves samples across the shards. Instead, we'll sample windows on
   # shards independently using interleave.
