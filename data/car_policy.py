@@ -22,6 +22,9 @@ from absl import app
 from absl import flags
 from absl import logging
 
+import numpy as np
+from proto_tools import proto_logger
+
 import gin
 # Need import to get env resgistration.
 from ibc.environments.block_pushing import block_pushing  # pylint: disable=unused-import
@@ -80,6 +83,45 @@ flags.DEFINE_string(
     'to the given path.')
 flags.DEFINE_integer('replicas', None,
                      'Number of parallel replicas generating evaluations.')
+
+class ProtoLogger():
+  def __init__(self):
+    self.traj_buffer = {'observation' : [],
+                        'action': [],
+                        'reward': [],
+                        'length': []}
+
+    self.obs = []
+    self.act = []
+    self.r = []
+
+  def log_episode_complete(self,traj):
+    #import pdb; pdb.set_trace()
+    self.obs.append(traj.observation)
+    self.act.append(traj.action)
+    self.r.append(traj.reward)
+    if traj.step_type == 2:
+      self.write_episode()
+
+  def write_episode(self):
+    self.traj_buffer['observation'].append(np.array(self.obs))
+    self.traj_buffer['action'].append(np.array(self.act))
+    self.traj_buffer['reward'].append(np.array(self.r))
+    self.traj_buffer['length'].append(len(self.act))
+    self.clear_buffer()
+  
+  def clear_buffer(self):
+    self.obs = []
+    self.act = []
+    self.r = []
+
+  def write_to_protobuf(self,filename):
+    proto_logger.export_to_protobuf(self.traj_buffer,filename)
+    self.clear_buffer()
+    self.traj_buffer = {'observation' : [],
+                        'action': [],
+                        'reward': [],
+                        'length': []}
 
 
 def evaluate(num_episodes,
@@ -191,10 +233,17 @@ def evaluate(num_episodes,
             py_mode=True,
             compress_image=True))
 
+  proto_logger = ProtoLogger()
+  observers.append(proto_logger.log_episode_complete)
   driver = py_driver.PyDriver(env, policy, observers, max_episodes=num_episodes)
   time_step = env.reset()
   initial_policy_state = policy.get_initial_state(1)
   driver.run(time_step, initial_policy_state)
+
+  proto_path = '/home/docker/irl_control_container/data/expert_trajectories'
+  proto_name = os.path.join(proto_path,"MountainCarContinuous_ddpg")
+  proto_logger.write_to_protobuf(proto_name)
+  print("########")
   log = ['{0} = {1}'.format(m.name, m.result()) for m in metrics]
   logging.info('\n\t\t '.join(log))
 

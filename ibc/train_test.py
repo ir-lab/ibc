@@ -123,7 +123,7 @@ def train_eval(
   if tag:
     root_dir = os.path.join(root_dir, tag)
   if add_time:
-    current_time = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+    current_time = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
     root_dir = os.path.join(root_dir, current_time)
   proto_path = os.path.join(root_dir,"Trajectories")
   os.makedirs(proto_path)
