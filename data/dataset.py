@@ -145,7 +145,6 @@ def load_tfrecord_dataset_sequence(path_to_shards,
     specs.append(dataset_spec)
     if not all([dataset_spec == spec for spec in specs]):
       raise ValueError('One or more of the encoding specs do not match.')
-  import pdb; pdb.set_trace()
   decoder = example_encoding.get_example_decoder(specs[0], batched=True,
                                                  compress_image=compress_image)
   # Note: window cannot be called on TFRecordDataset(shards) directly as it
@@ -174,7 +173,6 @@ def load_tfrecord_dataset_sequence(path_to_shards,
   # We now have decoded sequences, each sample containing adjacent frames
   # within a single shard. However, the window may span multiple episodes, so
   # we need to filter these.
-
   if for_rnn:
     return dataset.map(
         filter_episodes_rnn, num_parallel_calls=num_parallel_calls)
