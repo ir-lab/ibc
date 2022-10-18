@@ -116,7 +116,7 @@ def train_eval(
     raise ValueError('task argument must be set.')
   logging.info(('Using task:', task))
 
-  tf.random.set_seed(seed)
+  #tf.random.set_seed(seed)
   if not tf.io.gfile.exists(root_dir):
     tf.io.gfile.makedirs(root_dir)
 
@@ -333,7 +333,7 @@ def evaluation_step(eval_episodes, eval_env, eval_actor, name_scope_suffix=''):
     # This will eval on seeds:
     # [0, 1, ..., eval_episodes-1]
     for eval_seed in range(eval_episodes):
-      eval_env.seed(eval_seed)
+      #eval_env.seed(eval_seed)
       eval_actor.reset()  # With the new seed, the env actually needs reset.
       eval_actor.run()
 
