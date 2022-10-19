@@ -117,7 +117,7 @@ class TFRecorder(object):
 dataset_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/d4rl/car4/2d_car"
 
 spec_path= "/home/docker/irl_control_container/data/expert_trajectories/dataspec.pbtxt"
-proto_file = "/home/docker/irl_control_container/data/expert_trajectories/mountaincar_continuous_ddpg.proto"
+proto_file = "/home/docker/irl_control_container/data/expert_trajectories/mountaincar_continuous/mountaincar_continuous_trpo_gym250.proto"
 dataspec = tensor_spec.from_pbtxt_file(spec_path)
 
 f = open(proto_file, "rb")
