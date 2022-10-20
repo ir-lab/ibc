@@ -29,6 +29,7 @@ except:  # pylint: disable=bare-except
 from tf_agents.environments import parallel_py_environment  # pylint: disable=g-import-not-at-top
 from tf_agents.environments import suite_gym
 from tf_agents.environments import wrappers
+import gym
 
 flags.DEFINE_bool('eval_env_2dboard_use_normalized_env', False,
                   'If true, load the normalized version of the environment '
@@ -79,6 +80,7 @@ def get_eval_env(env_name, sequence_length, goal_tolerance, num_envs):
         [env_ctor] * num_envs, start_serially=False)
   else:
     eval_env = load_env_fn(env_name)
+    #eval_env = gym.make(env_name)
     if env_name not in tasks.D4RL_TASKS and 'Block' in env_name:
       eval_env.set_goal_dist_tolerance(goal_tolerance)
     eval_env = wrappers.HistoryWrapper(

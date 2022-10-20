@@ -41,6 +41,10 @@ from tf_agents.train.utils import spec_utils
 from tf_agents.train.utils import strategy_utils
 from tf_agents.train.utils import train_utils
 from tf_agents.utils import common
+from tf_agents.specs import BoundedArraySpec, ArraySpec
+from tf_agents.specs import tensor_spec
+import numpy as np
+from tf_agents.trajectories import TimeStep
 
 flags.DEFINE_string('tag', None,
                     'Tag for the experiment. Appended to the root_dir.')
@@ -139,6 +143,7 @@ def train_eval(
 
     obs_tensor_spec, action_tensor_spec, time_step_tensor_spec = (
         spec_utils.get_tensor_specs(eval_env))
+    #import pdb;pdb.set_trace()
     # Compute normalization info from training data.
     create_train_and_eval_fns_unnormalized = data_module.get_data_fns(
         dataset_path,
@@ -335,6 +340,9 @@ def evaluation_step(eval_episodes, eval_env, eval_actor, name_scope_suffix=''):
     for eval_seed in range(eval_episodes):
       #eval_env.seed(eval_seed)
       eval_actor.reset()  # With the new seed, the env actually needs reset.
+      #import pdb; pdb.set_trace()
+      #eval_actor._time_step = eval_actor._env.reset(dict([('low',-0.4),('high',0.4)]))
+      #eval_actor._policy_state = eval_actor._policy.get_initial_state(eval_actor._env.batch_size or 1)
       eval_actor.run()
 
     eval_actor.log_metrics()

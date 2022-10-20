@@ -114,10 +114,10 @@ class TFRecorder(object):
       flat_data = tf.nest.flatten(data)
       tf.numpy_function(self.write, flat_data, [], name='encoder_observer')
 
-dataset_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/d4rl/car_trpo/2d_car"
+dataset_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/d4rl/car_trpo_outOfDist/2d_car"
 
 spec_path= "/home/docker/irl_control_container/data/expert_trajectories/dataspec.pbtxt"
-proto_file = "/home/docker/irl_control_container/data/expert_trajectories/mountaincar_continuous_trpo.proto"
+proto_file = "/home/docker/irl_control_container/data/expert_trajectories/mountaincar_continuous_trpo_outOfDist.proto"
 dataspec = tensor_spec.from_pbtxt_file(spec_path)
 
 f = open(proto_file, "rb")
