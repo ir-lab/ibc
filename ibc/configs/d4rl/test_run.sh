@@ -5,7 +5,7 @@
 CMD='python3 ibc/ibc/train_test.py '
 GIN='ibc/ibc/configs/d4rl/mlp_ebm_test.gin'
 #GIN='ibc/ibc/configs/d4rl/test_run.gin'
-DATA="train_eval.dataset_path='ibc/data/d4rl/car4/*.tfrecord'"
+DATA="train_eval.dataset_path='ibc/data/d4rl/car_trpo/*.tfrecord'"
 
 $CMD -- \
   --alsologtostderr \
