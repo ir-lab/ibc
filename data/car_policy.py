@@ -23,7 +23,7 @@ from absl import flags
 from absl import logging
 
 import numpy as np
-from proto_tools import proto_logger
+from utils.proto_tools import proto_logger
 
 import gin
 # Need import to get env resgistration.
