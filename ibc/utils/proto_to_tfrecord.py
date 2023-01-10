@@ -4,10 +4,15 @@ from tf_agents.specs import tensor_spec
 from proto_tools.build.py.trajectory_pb2 import trajectory as proto_trajectory
 from tf_agents.trajectories import Trajectory
 
+from hashids import Hashids
+
 import functools
 import os
 import shutil
 import numpy as np
+import calendar
+import time
+import random
 
 from absl import app
 from absl import flags
@@ -114,45 +119,55 @@ class TFRecorder(object):
       flat_data = tf.nest.flatten(data)
       tf.numpy_function(self.write, flat_data, [], name='encoder_observer')
 
-dataset_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/d4rl/car_trpo_outOfDist/2d_car"
+def export_to_tfrecord(proto_file):
+  print("Exporting : ",proto_file)
+  f = open(proto_file, "rb")
+  traj = proto_trajectory()
+  traj.ParseFromString(f.read())
+  f.close()
+  # import pdb; pdb.set_trace()
+  for idx in range(len(traj.observations)):
+    obs = np.vstack([x.value for x in traj.observations[idx].sub_lists]).T
+    act = np.vstack([x.value for x in traj.actions[idx].sub_lists]).T
+    rewards = traj.rewards[idx].value
+    hash = hashids.encode(calendar.timegm(time.gmtime())+random.randint(0,1000))
+    file_path = tfrecord_path + f"_{hash}.tfrecord"
+    recorder = TFRecorder(
+              file_path,
+              dataspec,
+              py_mode=True,
+              compress_image=True)
+    for index in range(len(obs)):
+      if index == 0:
+        step_type = 0
+        next_step_type = 1
+      elif index == len(obs)-2:
+        step_type = 1
+        next_step_type = 2
+      elif index == len(obs)-1:
+        step_type = 2
+        next_step_type = 0
+      else:
+        step_type = 1
+        next_step_type = 1
+      tensor_traj = Trajectory(step_type=np.array(step_type,dtype=np.int32),
+                            observation=np.array(obs[index],dtype=np.float32),
+                            action=np.array(act[index],dtype=np.float32),
+                            policy_info=(),
+                            next_step_type=np.array(next_step_type,dtype=np.int32),
+                            reward=np.array(rewards[index],dtype=np.float32),
+                            discount=np.array(1,dtype=np.float32))
+      recorder(tensor_traj)
 
-spec_path= "/home/docker/irl_control_container/data/expert_trajectories/dataspec.pbtxt"
-proto_file = "/home/docker/irl_control_container/data/expert_trajectories/mountaincar_continuous_trpo_outOfDist.proto"
+tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/d4rl/bimanual_object_t_dpos/dual_insert"
+
+spec_path= "/home/docker/irl_control_container/data/expert_trajectories/bimanual_object_t_dpos/bimanual_dataspec.pbtxt"
+dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/bimanual_object_t_dpos/*.proto"
 dataspec = tensor_spec.from_pbtxt_file(spec_path)
 
-f = open(proto_file, "rb")
-traj = proto_trajectory()
-traj.ParseFromString(f.read())
-f.close()
+proto_files = tf.io.gfile.glob(dataset_path)
+hashids = Hashids()
 
-for idx in range(len(traj.observations)):
-  obs = np.vstack([x.value for x in traj.observations[idx].sub_lists]).T
-  act = np.vstack([x.value for x in traj.actions[idx].sub_lists]).T
-  rewards = traj.rewards[idx].value
-  file_path = dataset_path + f"_{idx}.tfrecord"
-  recorder = TFRecorder(
-             file_path,
-             dataspec,
-             py_mode=True,
-             compress_image=True)
-  for index in range(len(obs)):
-    if index == 0:
-      step_type = 0
-      next_step_type = 1
-    elif index == len(obs)-2:
-      step_type = 1
-      next_step_type = 2
-    elif index == len(obs)-1:
-      step_type = 2
-      next_step_type = 0
-    else:
-      step_type = 1
-      next_step_type = 1
-    tensor_traj = Trajectory(step_type=np.array(step_type,dtype=np.int32),
-                          observation=np.array(obs[index],dtype=np.float32),
-                          action=np.array(act[index],dtype=np.float32),
-                          policy_info=(),
-                          next_step_type=np.array(next_step_type,dtype=np.int32),
-                          reward=np.array(rewards[index],dtype=np.float32),
-                          discount=np.array(1,dtype=np.float32))
-    recorder(tensor_traj)
+for proto_file in proto_files:
+  export_to_tfrecord(proto_file)
+
