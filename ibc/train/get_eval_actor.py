@@ -22,7 +22,7 @@ from ibc.environments.d4rl import metrics as d4rl_metrics
 from ibc.ibc import tasks
 from ibc.ibc.utils import strategy_policy
 from tf_agents.train import actor
-from proto_tools import proto_logger
+from utils.proto_tools import proto_logger
 
 
 class EvalActor():
