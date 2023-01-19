@@ -45,6 +45,19 @@ from tf_agents.specs import BoundedArraySpec, ArraySpec
 from tf_agents.specs import tensor_spec
 import numpy as np
 from tf_agents.trajectories import TimeStep
+import gym
+
+gym.envs.register(
+        id='pathfollow-v1',
+        entry_point='imitation.environments.path_follow_v1.path_follow_v1:PathFollowV1',
+        max_episode_steps=125,
+    )
+
+gym.envs.register(
+        id='pathfollow-v2',
+        entry_point='imitation.environments.path_follow_v2.path_follow_v2:PathFollowV2',
+        max_episode_steps=125,
+    )
 
 flags.DEFINE_string('tag', None,
                     'Tag for the experiment. Appended to the root_dir.')
@@ -114,7 +127,7 @@ def train_eval(
     # -1 for 'use all'.
     max_data_shards=-1,
     use_warmup=False,
-    runs=30):
+    runs=1):
   """Trains a BC agent on the given datasets."""
   if task is None:
     raise ValueError('task argument must be set.')
@@ -126,7 +139,7 @@ def train_eval(
 
   # Logging.
   if tag:
-    root_dir = os.path.join(root_dir, "mounatincar_continuous")
+    root_dir = os.path.join(root_dir, tag)
   if add_time:
     current_time = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
     root_dir = os.path.join(root_dir, current_time)

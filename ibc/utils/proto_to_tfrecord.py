@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tf_agents.utils import example_encoding
 from tf_agents.specs import tensor_spec
-from proto_tools.build.py.trajectory_pb2 import trajectory as proto_trajectory
+from utils.proto_tools.build.py.trajectory_pb2 import trajectory as proto_trajectory
 from tf_agents.trajectories import Trajectory
 
 from hashids import Hashids
@@ -159,10 +159,10 @@ def export_to_tfrecord(proto_file):
                             discount=np.array(1,dtype=np.float32))
       recorder(tensor_traj)
 
-tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/d4rl/bimanual_object_t_dpos/dual_insert"
+tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/d4rl/path_follow_v2/pathfollow"
 
-spec_path= "/home/docker/irl_control_container/data/expert_trajectories/bimanual_object_t_dpos/bimanual_dataspec.pbtxt"
-dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/bimanual_object_t_dpos/*.proto"
+spec_path= "/home/docker/irl_control_container/data/expert_trajectories/path_follow_v2_storage/dataspec.pbtxt"
+dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/path_follow_v2_storage/*.proto"
 dataspec = tensor_spec.from_pbtxt_file(spec_path)
 
 proto_files = tf.io.gfile.glob(dataset_path)
@@ -170,4 +170,3 @@ hashids = Hashids()
 
 for proto_file in proto_files:
   export_to_tfrecord(proto_file)
-

@@ -23,11 +23,11 @@ train_eval.eval_interval = 1000
 train_eval.eval_episodes = 1
 train_eval.learning_rate = 1e-3
 train_eval.goal_tolerance = 0.02
-train_eval.sequence_length = 2
+train_eval.sequence_length = 1
 train_eval.dataset_eval_fraction = 0.0
 
 # Config for sampling actions.
-ImplicitBCAgent.num_counter_examples = 8  # training.
+ImplicitBCAgent.num_counter_examples = 100  # training.
 IbcPolicy.num_action_samples = 512
 train_eval.uniform_boundary_buffer = 0.05
 get_normalizers.nested_obs = False  # BlockPushing has nested

@@ -83,12 +83,11 @@ class ImplicitBCAgent(base_agent.BehavioralCloningAgent):
     assert self._fraction_dfo_samples >= 0.
     assert self._fraction_langevin_samples >= 0.
     self.ebm_loss_type = ebm_loss_type
+
+    self._run_full_chain_under_gradient = run_full_chain_under_gradient
     if self.ebm_loss_type == 'cd_kl':
       self.cloning_network_copy = copy.deepcopy(self.cloning_network)
       assert self._run_full_chain_under_gradient
-
-    self._run_full_chain_under_gradient = run_full_chain_under_gradient
-
     self._return_full_chain = return_full_chain
     self._add_grad_penalty = add_grad_penalty
     self._grad_norm_type = grad_norm_type

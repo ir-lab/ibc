@@ -16,6 +16,7 @@
 """EBM loss functions."""
 
 import tensorflow as tf
+from absl import logging
 
 
 def info_nce(predictions,
@@ -45,6 +46,7 @@ def info_nce(predictions,
   labels = tf.one_hot(indices, depth=num_counter_examples + 1)
 
   per_example_loss = kl(labels, softmaxed_predictions)
+  # logging.info(("Loss : ",per_example_loss))
   return per_example_loss, dict()
 
 
