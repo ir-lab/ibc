@@ -319,6 +319,7 @@ def training_step(agent, bc_learner, fused_train_steps, train_step):
   if not hasattr(agent, 'ebm_loss_type') or agent.ebm_loss_type != 'cd_kl':
     reduced_loss_info = bc_learner.run(iterations=fused_train_steps)
   else:
+    print("this")
     for _ in range(fused_train_steps):
       # I think impossible to do this inside tf.function.
       agent.cloning_network_copy.set_weights(
