@@ -16,7 +16,8 @@
 """A PyTfEagerPolicy that runs under a tf.distribute.Strategy."""
 
 from typing import Optional
-
+import datetime
+import numpy as np
 from absl import logging
 import tensorflow as tf
 from tf_agents.policies import py_tf_eager_policy
@@ -38,7 +39,8 @@ class StrategyPyTFEagerPolicy(py_tf_eager_policy.PyTFEagerPolicyBase):
     policy_state_spec = tensor_spec.to_nest_array_spec(policy.policy_state_spec)
     info_spec = tensor_spec.to_nest_array_spec(policy.info_spec)
     self._strategy = strategy
-    use_tf_function = True
+    use_tf_function = False
+    self.act = []
     super(StrategyPyTFEagerPolicy,
           self).__init__(policy, time_step_spec, action_spec, policy_state_spec,
                          info_spec, use_tf_function, batch_time_steps)
@@ -62,10 +64,21 @@ class StrategyPyTFEagerPolicy(py_tf_eager_policy.PyTFEagerPolicyBase):
       local_results = self._strategy.experimental_local_results(strategy_result)
       policy_step = local_results[0]
     else:
-      strategy_result = self._strategy.run(
-          self._policy_action_fn, args=(time_step, policy_state))
+      # import pdb;pdb.set_trace()
+      #strategy_result = self._policy_action_fn(time_step=time_step,policy_state=policy_state)
+      strategy_result = self._strategy.run(self._policy_action_fn, args=(time_step, policy_state))
       local_results = self._strategy.experimental_local_results(strategy_result)
       policy_step = local_results[0]
+    try:
+      act = local_results[0].action.numpy()
+      self.act.append(act[0])
+      #print(len(self.act))
+      if len(self.act) == 101:
+        npy_name = f"action_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')}"
+        self.act = np.asarray(self.act)
+        np.save(npy_name,self.act)
+    except AttributeError:
+      pass
     if not self._batch_time_steps:
       return policy_step
     return policy_step._replace(

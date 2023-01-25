@@ -15,11 +15,14 @@
 
 """Modified ActorPolicy that will generate sample actions to evaluate."""
 from typing import Optional, Text
+import datetime
+from csv import writer
 
 import gin
 from ibc.ibc.agents import mcmc
 import tensorflow as tf
 import tensorflow_probability as tfp
+import numpy as np
 
 from tf_agents.networks import nest_map
 from tf_agents.networks import network
@@ -29,6 +32,8 @@ from tf_agents.trajectories import policy_step
 from tf_agents.trajectories import time_step as ts
 from tf_agents.typing import types
 from tf_agents.utils import nest_utils
+
+from hashids import Hashids
 
 tfd = tfp.distributions
 
@@ -132,7 +137,6 @@ class MappedCategorical(tfp.distributions.Categorical):
 @gin.configurable
 class IbcPolicy(tf_policy.TFPolicy):
   """Class to build Actor Policies."""
-
   def __init__(self,
                time_step_spec,
                action_spec,
@@ -223,6 +227,9 @@ class IbcPolicy(tf_policy.TFPolicy):
 
     self._actor_network = actor_network
     self._training = training
+    self.prob_dist = []
+
+    self.csv_name = f"prob_dist_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')}.csv"
 
     super(IbcPolicy, self).__init__(
         time_step_spec=time_step_spec,
@@ -292,10 +299,10 @@ class IbcPolicy(tf_policy.TFPolicy):
           training=False,
           tfa_step_type=time_step.step_type,
           noise_scale=1.0)
-
       # Run a second optimization, a trick for more precise
       # inference.
       if self._optimize_again:
+        print("Using optimiz again")
         action_samples = mcmc.langevin_actions_given_obs(
             self._actor_network,
             maybe_tiled_obs,
@@ -316,13 +323,27 @@ class IbcPolicy(tf_policy.TFPolicy):
                                      maybe_tiled_obs,
                                      action_samples,
                                      training=False)
-
     if self._act_denorm_layer is not None:
       action_samples = self._act_denorm_layer(action_samples)
       if isinstance(self._act_denorm_layer, nest_map.NestMap):
         action_samples, _ = action_samples
-
+    
     # Make a distribution for sampling.
     distribution = MappedCategorical(
         probs=probs, mapped_values=action_samples)
-    return policy_step.PolicyStep(distribution, policy_state)
+    try:
+      prob_dist = np.hstack([action_samples.numpy(),probs.numpy().reshape(512,1)])
+      self.prob_dist.append(prob_dist)
+      #print("p : ",len(self.prob_dist))
+      if len(self.prob_dist) == 101:
+        npy_name = f"prob_dist_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')}"
+        dist = np.asarray(self.prob_dist)
+        np.save(npy_name,dist)
+      # with open(self.csv_name,"a") as f:
+      #   writer_o = writer(f)
+      #   writer_o.writerow(prob_dist)
+      #   f.close()
+    except AttributeError:
+      pass
+    policystep = policy_step.PolicyStep(distribution, policy_state)
+    return policystep

@@ -159,10 +159,10 @@ def export_to_tfrecord(proto_file):
                             discount=np.array(1,dtype=np.float32))
       recorder(tensor_traj)
 
-tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/d4rl/path_follow_v2/pathfollow"
+tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/d4rl/path_follow_v1/pathfollow"
 
-spec_path= "/home/docker/irl_control_container/data/expert_trajectories/path_follow_v2_storage/dataspec.pbtxt"
-dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/path_follow_v2_storage/*.proto"
+spec_path= "/home/docker/irl_control_container/data/expert_trajectories/path_follow_v1_storage/dataspec.pbtxt"
+dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/path_follow_v1_storage/*.proto"
 dataspec = tensor_spec.from_pbtxt_file(spec_path)
 
 proto_files = tf.io.gfile.glob(dataset_path)

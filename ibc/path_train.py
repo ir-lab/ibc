@@ -50,13 +50,13 @@ import gym
 gym.envs.register(
         id='pathfollow-v1',
         entry_point='imitation.environments.path_follow_v1.path_follow_v1:PathFollowV1',
-        max_episode_steps=125,
+        max_episode_steps=100,
     )
 
 gym.envs.register(
         id='pathfollow-v2',
         entry_point='imitation.environments.path_follow_v2.path_follow_v2:PathFollowV2',
-        max_episode_steps=125,
+        max_episode_steps=100,
     )
 
 flags.DEFINE_string('tag', None,
@@ -145,7 +145,7 @@ def train_eval(
     root_dir = os.path.join(root_dir, current_time)
   proto_path = os.path.join(root_dir,"Trajectories")
   os.makedirs(proto_path)
-  
+
   for run in range(runs):
     # Define eval env.
     env_name = eval_env_module.get_env_name(task, shared_memory_eval, image_obs)
@@ -265,10 +265,11 @@ def train_eval(
         os.path.join(root_dir, 'operative-gin-config.txt'), 'wb') as f:
       f.write(gin.operative_config_str())
     # Main train and eval loop.
+    loss = []
     while train_step.numpy() < num_iterations:
       # Run bc_learner for fused_train_steps.
-      training_step(agent, bc_learner, fused_train_steps, train_step)
-
+      reduced_loss = training_step(agent, bc_learner, fused_train_steps, train_step)
+      loss.append(reduced_loss)
       if (dist_eval_data_iter is not None and
           train_step.numpy() % eval_loss_interval == 0):
         # Run a validation step.
@@ -310,6 +311,9 @@ def train_eval(
                       name=os.path.join('AggregatedMetrics/', key),
                       data=sum(value) / len(value),
                       step=train_step)
+    npy_name = f"loss_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')}"
+    loss = np.asarray(loss)
+    np.save(npy_name,loss)
     summary_writer.flush()
 
 
@@ -319,7 +323,6 @@ def training_step(agent, bc_learner, fused_train_steps, train_step):
   if not hasattr(agent, 'ebm_loss_type') or agent.ebm_loss_type != 'cd_kl':
     reduced_loss_info = bc_learner.run(iterations=fused_train_steps)
   else:
-    print("this")
     for _ in range(fused_train_steps):
       # I think impossible to do this inside tf.function.
       agent.cloning_network_copy.set_weights(
@@ -332,6 +335,7 @@ def training_step(agent, bc_learner, fused_train_steps, train_step):
         True):
       tf.summary.scalar(
           'reduced_loss', reduced_loss_info.loss, step=train_step)
+  return reduced_loss_info.loss.numpy()
 
 
 def validation_step(dist_eval_data_iter, bc_learner, train_step,
