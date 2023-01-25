@@ -17,6 +17,11 @@
 import gin
 import tensorflow.compat.v2 as tf
 
+class Tanh(tf.keras.layers.Layer):
+  """A non-trainable, beta=1 swish layer."""
+
+  def call(self, inputs):
+    return tf.keras.activations.tanh(inputs)
 
 class Swish(tf.keras.layers.Layer):
   """A non-trainable, beta=1 swish layer."""
@@ -81,6 +86,8 @@ class ResNetLayer(tf.keras.layers.Layer):
         self._activation_layers.append(tf.keras.layers.ReLU())
       elif activation == 'swish':
         self._activation_layers.append(Swish())
+      elif activation == 'tanh':
+        self._activation_layers.append(Tanh())
       else:
         raise ValueError('Expected a different layer activation.')
       self._dropouts.append(tf.keras.layers.Dropout(rate))
@@ -99,6 +106,8 @@ class ResNetLayer(tf.keras.layers.Layer):
         self._activation_layers_2.append(tf.keras.layers.ReLU())
       elif activation == 'swish':
         self._activation_layers_2.append(Swish())
+      elif activation == 'tanh':
+        self._activation_layers_2.append(Tanh())
       else:
         raise ValueError('Expected a different layer activation.')
       self._dropouts_2.append(tf.keras.layers.Dropout(rate))
