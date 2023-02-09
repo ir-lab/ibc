@@ -331,19 +331,19 @@ class IbcPolicy(tf_policy.TFPolicy):
     # Make a distribution for sampling.
     distribution = MappedCategorical(
         probs=probs, mapped_values=action_samples)
-    try:
-      prob_dist = np.hstack([action_samples.numpy(),probs.numpy().reshape(512,1)])
-      self.prob_dist.append(prob_dist)
-      #print("p : ",len(self.prob_dist))
-      if len(self.prob_dist) == 101:
-        npy_name = f"prob_dist_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')}"
-        dist = np.asarray(self.prob_dist)
-        np.save(npy_name,dist)
-      # with open(self.csv_name,"a") as f:
-      #   writer_o = writer(f)
-      #   writer_o.writerow(prob_dist)
-      #   f.close()
-    except AttributeError:
-      pass
+    # try:
+    #   prob_dist = np.hstack([action_samples.numpy(),probs.numpy().reshape(512,1)])
+    #   self.prob_dist.append(prob_dist)
+    #   #print("p : ",len(self.prob_dist))
+    #   if len(self.prob_dist) == 101:
+    #     npy_name = f"prob_dist_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')}"
+    #     dist = np.asarray(self.prob_dist)
+    #     np.save(npy_name,dist)
+    #   # with open(self.csv_name,"a") as f:
+    #   #   writer_o = writer(f)
+    #   #   writer_o.writerow(prob_dist)
+    #   #   f.close()
+    # except AttributeError:
+    #   pass
     policystep = policy_step.PolicyStep(distribution, policy_state)
     return policystep

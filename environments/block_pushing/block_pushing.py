@@ -384,12 +384,10 @@ class BlockPush(gym.Env):
           block_rotation.as_quat().tolist())
 
       # Reset target pose.
-      target_x = workspace_center_x + self._rng.uniform(low=-0.10, high=0.10)
-      target_y = 0.2 + self._rng.uniform(low=-0.15, high=0.15)
+      target_x = workspace_center_x + 0.05  #self._rng.uniform(low=-0.10, high=0.10)
+      target_y = 0.2 + 0.05  #self._rng.uniform(low=-0.15, high=0.15)
       target_translation = np.array([target_x, target_y, 0.020])
-
-      target_sampled_angle = math.pi + self._rng.uniform(
-          low=-math.pi / 6, high=math.pi / 6)
+      target_sampled_angle = math.pi #+ self._rng.uniform(low=-math.pi / 6, high=math.pi / 6)
       target_rotation = transform.Rotation.from_rotvec(
           [0, 0, target_sampled_angle])
 
@@ -457,9 +455,9 @@ class BlockPush(gym.Env):
         block_translation=block_pose.translation[0:2],
         block_orientation=_yaw_from_pose(block_pose),
         effector_translation=effector_pose.translation[0:2],
-        effector_target_translation=self._target_effector_pose.translation[0:2],
-        target_translation=self._target_pose.translation[0:2],
-        target_orientation=_yaw_from_pose(self._target_pose))
+        effector_target_translation=self._target_effector_pose.translation[0:2],)
+        # target_translation=self._target_pose.translation[0:2],
+        # target_orientation=_yaw_from_pose(self._target_pose))
     if self._image_size is not None:
       obs['rgb'] = self._render_camera(self._image_size)
     return obs
@@ -636,12 +634,12 @@ class BlockPush(gym.Env):
             0.1,  # Small buffer for to IK noise.
             high=self.workspace_bounds[1] + 0.1,
         ),  # x,y
-        target_translation=spaces.Box(low=-5, high=5, shape=(2,)),  # x,y
-        target_orientation=spaces.Box(
-            low=-pi2,
-            high=pi2,
-            shape=(1,),
-        ),  # theta
+        # target_translation=spaces.Box(low=-5, high=5, shape=(2,)),  # x,y
+        # target_orientation=spaces.Box(
+        #     low=-pi2,
+        #     high=pi2,
+        #     shape=(1,),
+        # ),  # theta
     )
     if image_size is not None:
       obs_dict['rgb'] = spaces.Box(

@@ -121,10 +121,9 @@ def evaluate(num_episodes,
   if history_length:
     env = wrappers.HistoryWrapper(
         env, history_length=history_length, tile_first_step_obs=True)
-
+        
   if video:
     video_path = output_path
-
     if saved_model_path:
       policy_name = os.path.basename(os.path.normpath(saved_model_path))
       checkpoint_ref = checkpoint_path.split('_')[-1]

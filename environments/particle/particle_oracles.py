@@ -23,6 +23,7 @@ from tf_agents.policies import py_policy
 from tf_agents.trajectories import policy_step
 from tf_agents.trajectories import time_step as ts
 from tf_agents.typing import types
+import numpy as np
 
 
 class ParticleOracle(py_policy.PyPolicy):
@@ -32,7 +33,7 @@ class ParticleOracle(py_policy.PyPolicy):
                env,
                wait_at_first_goal = 1,
                multimodal = False,
-               goal_threshold = 0.01):
+               goal_threshold = 0.02):
     """Create oracle.
 
     Args:
@@ -51,12 +52,21 @@ class ParticleOracle(py_policy.PyPolicy):
     self.wait_at_first_goal = wait_at_first_goal
     assert goal_threshold > 0.
     self.goal_threshold = goal_threshold
-
     self.multimodal = multimodal
+    self.scale = 5
+    self.step = 0
+    freq = 2
+    w = 2 * np.pi * freq
+    #self.x_wave = np.linspace(0.5,1,20)
+    #self.y_wave = (0.1*np.sin(w*self.x_wave)) + 0.5
+    self.x_wave = np.array([0.5,0.8,1])
+    self.y_wave = np.array([0.5,0.6,0.5])
+    self.wave_fn = np.dstack((self.x_wave,self.y_wave))[0]
     self.reset()
 
   def reset(self):
     self.steps_at_first_goal = 0
+    self.fn_indx = 0
     self.goal_order = ['pos_first_goal', 'pos_second_goal']
     if self.multimodal:
       # Choose a random goal order.
@@ -67,19 +77,32 @@ class ParticleOracle(py_policy.PyPolicy):
 
     if time_step.is_first():
       self.reset()
-
+    self.step += 1
     first_goal_key = self.goal_order[0]
     second_goal_key = self.goal_order[1]
     obs = time_step.observation
+    #print("Pos Observation : ",obs['pos_agent'])
+    #gt_goals = self._env.obs_log[0]
 
-    gt_goals = self._env.obs_log[0]
-    dist = np.linalg.norm(obs['pos_agent'] - gt_goals[first_goal_key])
+    # dist = np.linalg.norm(obs['pos_agent'] - np.array([0.5,0.2],dtype = np.float32))  #gt_goals[first_goal_key]
+    # if dist < self.goal_threshold:
+    #   self.steps_at_first_goal += 1
+
+    # if self.steps_at_first_goal < self.wait_at_first_goal:
+    #   act = (np.array([0.5,0.2],dtype = np.float32) - obs['pos_agent']) * self.scale   #gt_goals[first_goal_key]
+    #   # print("Goal 1 :",gt_goals[first_goal_key])
+    #   #act = np.copy(gt_goals[first_goal_key])
+    # else:
+    #   act = (np.array([0.9,0.2],dtype = np.float32) - obs['pos_agent']) * self.scale
+    #   # print("Goal 2 :",gt_goals[second_goal_key])
+    #   #act = np.copy(gt_goals[second_goal_key])
+    dist = np.linalg.norm(obs['pos_agent'] - self.wave_fn[self.fn_indx])
+    final_dist = np.linalg.norm(obs['pos_agent'] - self.wave_fn[-1])
+    if final_dist < self.goal_threshold:
+      return policy_step.PolicyStep(action=np.array([0,0],dtype=np.float32))
+  
     if dist < self.goal_threshold:
-      self.steps_at_first_goal += 1
-
-    if self.steps_at_first_goal < self.wait_at_first_goal:
-      act = np.copy(gt_goals[first_goal_key])
-    else:
-      act = np.copy(gt_goals[second_goal_key])
+      self.fn_indx += 1
+    act = np.array((self.wave_fn[self.fn_indx] - obs['pos_agent']) * self.scale, dtype=np.float32)
 
     return policy_step.PolicyStep(action=act)

@@ -55,7 +55,8 @@ class OrientedPushOracle(py_policy.PyPolicy):
   def _get_action_info(self, time_step, block, target):
     xy_block = time_step.observation["%s_translation" % block][:2]
     theta_block = time_step.observation["%s_orientation" % block]
-    xy_target = time_step.observation["%s_translation" % target][:2]
+    #xy_target = time_step.observation["%s_translation" % target][:2]
+    xy_target = np.array([0.45,0.25])
     xy_ee = time_step.observation["effector_target_translation"][:2]
 
     xy_block_to_target = xy_target - xy_block

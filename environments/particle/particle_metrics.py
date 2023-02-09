@@ -118,7 +118,7 @@ class AverageFinalSecondGoalDistance(py_metrics.StreamingMetric):
     lasts = trajectory.is_last()
     if np.any(lasts):
       is_last = np.where(lasts)
-      final_dist = self._env.dist(self._env.obs_log[0]['pos_second_goal'])
+      final_dist = self._env.dist(np.array([1,0.5],dtype = np.float32))  #self._env.obs_log[0]['pos_second_goal']
       goal_distance = np.asarray(final_dist, np.float32)
 
       if goal_distance.shape is ():  # pylint: disable=literal-comparison

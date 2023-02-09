@@ -56,10 +56,10 @@ def visualize_2d(
     obs_log_ = obs_log
 
   # Visualize observations.
-  pos_first_goal = obs_log[0]['pos_first_goal']
+  pos_first_goal = np.array([0.5,0.5],dtype=np.float32) #obs_log[0]['pos_first_goal']
   ax.add_patch(plt.Circle(
       (pos_first_goal[0], pos_first_goal[1]), 0.01, color='g'))
-  pos_second_goal = obs_log[0]['pos_second_goal']
+  pos_second_goal = np.array([0.9,0.5],dtype=np.float32) #obs_log[0]['pos_second_goal']
   ax.add_patch(plt.Circle(
       (pos_second_goal[0], pos_second_goal[1]), 0.01, color='b'))
 

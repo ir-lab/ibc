@@ -59,6 +59,16 @@ gym.envs.register(
         max_episode_steps=100,
     )
 
+if 'Particle-v0' in gym.envs.registration.registry.env_specs:
+  del gym.envs.registration.registry.env_specs['Particle-v0']
+
+gym.envs.registration.register(id='Particle-v0', entry_point='ibc.environments.particle.particle:ParticleEnv')
+
+# if 'Particleenv-v1' in gym.envs.registration.registry.env_specs:
+#   del gym.envs.registration.registry.env_specs['Particleenv-v1']
+
+#gym.envs.registration.register(id='Particleenv-v1', entry_point='ibc.environments.particle.particle:ParticleEnv')
+
 flags.DEFINE_string('tag', None,
                     'Tag for the experiment. Appended to the root_dir.')
 flags.DEFINE_bool('add_time', False,
@@ -167,6 +177,7 @@ def train_eval(
         dataset_eval_fraction,
         flatten_action)
     train_data, _ = create_train_and_eval_fns_unnormalized()
+    #import pdb;pdb.set_trace()
     (norm_info, norm_train_data_fn) = normalizers_module.get_normalizers(
         train_data, batch_size, env_name)
 
@@ -283,7 +294,7 @@ def train_eval(
               eval_env,
               eval_actor,
               name_scope_suffix=f'_{env_name}')
-          proto_name = os.path.join(proto_path,f"algo=ibc,run={run}")
+          proto_name = os.path.join(proto_path,f"algo=ibc,train_step={train_step.numpy()},run={run}")
           eval_actor_class.write_to_protobuf(proto_name)
       
 
@@ -311,7 +322,7 @@ def train_eval(
                       name=os.path.join('AggregatedMetrics/', key),
                       data=sum(value) / len(value),
                       step=train_step)
-    npy_name = f"loss_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')}"
+    npy_name = os.path.join(root_dir,f"loss")
     loss = np.asarray(loss)
     np.save(npy_name,loss)
     summary_writer.flush()

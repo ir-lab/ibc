@@ -10,7 +10,7 @@ DATA="train_eval.dataset_path='ibc/data/d4rl/path_follow_v2/*.tfrecord'"
 $CMD -- \
   --alsologtostderr \
   --gin_file=$GIN \
-  --task=$1 \
+  --task=pathfollow-v2 \
   --tag=path_follow_v2 \
   --add_time=True \
   --gin_bindings=$DATA

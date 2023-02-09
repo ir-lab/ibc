@@ -69,16 +69,16 @@ class StrategyPyTFEagerPolicy(py_tf_eager_policy.PyTFEagerPolicyBase):
       strategy_result = self._strategy.run(self._policy_action_fn, args=(time_step, policy_state))
       local_results = self._strategy.experimental_local_results(strategy_result)
       policy_step = local_results[0]
-    try:
-      act = local_results[0].action.numpy()
-      self.act.append(act[0])
-      #print(len(self.act))
-      if len(self.act) == 101:
-        npy_name = f"action_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')}"
-        self.act = np.asarray(self.act)
-        np.save(npy_name,self.act)
-    except AttributeError:
-      pass
+    # try:
+    #   act = local_results[0].action.numpy()
+    #   self.act.append(act[0])
+    #   #print(len(self.act))
+    #   if len(self.act) == 101:
+    #     npy_name = f"action_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M')}"
+    #     self.act = np.asarray(self.act)
+    #     np.save(npy_name,self.act)
+    # except AttributeError:
+    #   pass
     if not self._batch_time_steps:
       return policy_step
     return policy_step._replace(

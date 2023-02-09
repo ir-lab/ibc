@@ -67,7 +67,6 @@ def get_eval_env(env_name, sequence_length, goal_tolerance, num_envs):
     load_env_fn = d4rl_utils.load_d4rl
   else:
     load_env_fn = suite_gym.load
-
   if num_envs > 1:
     def load_env_and_wrap(env_name):
       eval_env = load_env_fn(env_name)

@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-@gin.configurable
+#@gin.configurable
 class ParticleEnv(gym.Env):
   """Simple particle environment with gym wrapper.
 
@@ -75,16 +75,16 @@ class ParticleEnv(gym.Env):
     success_metric = metrics[-1]
     return metrics, success_metric
 
-  @gin.configurable
+  #@gin.configurable
   def __init__(
       self,
-      n_steps = 50,
+      n_steps = 150,
       n_dim = 2,
       hide_velocity = False,
       seed = None,
       dt = 0.005,  # 0.005 = 200 Hz
       repeat_actions = 10,  # 10 makes control 200/10 = 20 Hz
-      k_p = 10.,
+      k_p = 15.,
       k_v = 5.,
       goal_distance = 0.05
   ):
@@ -118,7 +118,7 @@ class ParticleEnv(gym.Env):
 
     self.k_p = k_p
     self.k_v = k_v
-    self.action_space = spaces.Box(low=0., high=1., shape=(self.n_dim,),
+    self.action_space = spaces.Box(low=-1., high=1., shape=(self.n_dim,),
                                    dtype=np.float32)
     self.observation_space = self._create_observation_space()
     self.reset()
@@ -130,10 +130,10 @@ class ParticleEnv(gym.Env):
         # TODO(peteflorence): is this the actual max for vel_agent?
         vel_agent=spaces.Box(low=-1e2, high=1e2, shape=(self.n_dim,),  # pytype: disable=attribute-error
                              dtype=np.float32),
-        pos_first_goal=spaces.Box(low=0., high=1., shape=(self.n_dim,),  # pytype: disable=attribute-error
-                                  dtype=np.float32),
-        pos_second_goal=spaces.Box(low=0., high=1., shape=(self.n_dim,),  # pytype: disable=attribute-error
-                                   dtype=np.float32)
+        # pos_first_goal=spaces.Box(low=0., high=1., shape=(self.n_dim,),  # pytype: disable=attribute-error
+        #                           dtype=np.float32),
+        # pos_second_goal=spaces.Box(low=0., high=1., shape=(self.n_dim,),  # pytype: disable=attribute-error
+        #                            dtype=np.float32)
     )
 
     if self.hide_velocity:  # pytype: disable=attribute-error
@@ -155,10 +155,16 @@ class ParticleEnv(gym.Env):
 
     obs = dict()
     obs['pos_agent'] = self._rng.rand(self.n_dim).astype(np.float32)  # pytype: disable=attribute-error
+    obs['pos_agent'][0] = obs['pos_agent'][0]/2
+    #print("Initial pos : ",obs['pos_agent'])
     obs['vel_agent'] = np.zeros((self.n_dim)).astype(np.float32)  # pytype: disable=attribute-error
-    obs['pos_first_goal'] = self._rng.rand(self.n_dim).astype(np.float32)  # pytype: disable=attribute-error
-    obs['pos_second_goal'] = self._rng.rand(self.n_dim).astype(np.float32)  # pytype: disable=attribute-error
-
+    self.first_goal = np.array([0.5,0.5],dtype = np.float32)
+    self.second_goal = np.array([1,0.5],dtype = np.float32)
+    # obs['pos_first_goal'] = self._rng.rand(self.n_dim).astype(np.float32)  # pytype: disable=attribute-error
+    # obs['pos_second_goal'] = self._rng.rand(self.n_dim).astype(np.float32)  # pytype: disable=attribute-error
+    #fix goal positions
+    # print("first goal : ",self.first_goal)
+    # print("second goal : ",self.second_goal)
     self.obs_log.append(obs)
 
     self.min_dist_to_first_goal = np.inf
@@ -176,8 +182,11 @@ class ParticleEnv(gym.Env):
     # u = k_p (x_{desired} - x) + k_v (xdot_{desired} - xdot)
     # xdot_{desired} is always (0, 0) -->
     # u = k_p (x_{desired} - x) - k_v (xdot)
-    u_agent = self.k_p * (action - obs['pos_agent']) - self.k_v * (  # pytype: disable=attribute-error
-        obs['vel_agent'])
+    # u_agent = self.k_p * (action - obs['pos_agent']) - self.k_v * (  # pytype: disable=attribute-error
+    #     obs['vel_agent'])
+
+    u_agent = self.k_p * (action - obs['vel_agent']) #- self.k_v * (obs['vel_agent'])
+
     new_xy_agent = obs['pos_agent'] + obs['vel_agent'] * self.dt  # pytype: disable=attribute-error
     new_velocity_agent = obs['vel_agent'] + u_agent * self.dt  # pytype: disable=attribute-error
     obs = copy.deepcopy(obs)
@@ -194,10 +203,10 @@ class ParticleEnv(gym.Env):
 
     # This also statefully updates these values.
     self.min_dist_to_first_goal = min(
-        self.dist(self.obs_log[0]['pos_first_goal']),  # pytype: disable=attribute-error
+        self.dist(self.first_goal),  # pytype: disable=attribute-error # self.obs_log[0]['pos_first_goal']
         self.min_dist_to_first_goal)  # pytype: disable=attribute-error
     self.min_dist_to_second_goal = min(
-        self.dist(self.obs_log[0]['pos_second_goal']),  # pytype: disable=attribute-error
+        self.dist(self.second_goal),  # pytype: disable=attribute-error   self.obs_log[0]['pos_second_goal']
         self.min_dist_to_second_goal)  # pytype: disable=attribute-error
 
     def _reward(thresh):
@@ -214,7 +223,7 @@ class ParticleEnv(gym.Env):
     hit_first = True if self.min_dist_to_first_goal < thresh else False
     hit_second = True if self.min_dist_to_second_goal < thresh else False
     # TODO(peteflorence/coreylynch: this doesn't work for multimodal version)
-    current_distance_to_second = self.dist(self.obs_log[0]['pos_second_goal'])
+    current_distance_to_second = self.dist(self.second_goal)    #self.obs_log[0]['pos_second_goal']
     still_at_second = True if current_distance_to_second < thresh else False
     return hit_first and hit_second and still_at_second
 

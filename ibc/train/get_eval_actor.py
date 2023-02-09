@@ -23,6 +23,7 @@ from ibc.ibc import tasks
 from ibc.ibc.utils import strategy_policy
 from tf_agents.train import actor
 from utils.proto_tools import proto_logger
+import collections
 
 
 class EvalActor():
@@ -37,8 +38,14 @@ class EvalActor():
     self.r = []
 
   def log_episode_complete(self,traj):
-    #import pdb; pdb.set_trace()
-    self.obs.append(traj.observation[-1])
+    if isinstance(traj.observation,collections.OrderedDict):
+      temp_obs = []
+      for ob in traj.observation.values():
+        for i in ob[-1]:
+          temp_obs.append(i)
+      self.obs.append(temp_obs)
+    else: 
+      self.obs.append(traj.observation[-1])
     self.act.append(traj.action)
     self.r.append(traj.reward)
     if traj.step_type == 2:
