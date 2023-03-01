@@ -78,8 +78,8 @@ class ParticleEnv(gym.Env):
   #@gin.configurable
   def __init__(
       self,
-      n_steps = 150,
-      n_dim = 2,
+      n_steps = 175,
+      n_dim = 3,
       hide_velocity = False,
       seed = None,
       dt = 0.005,  # 0.005 = 200 Hz
@@ -155,11 +155,11 @@ class ParticleEnv(gym.Env):
 
     obs = dict()
     obs['pos_agent'] = self._rng.rand(self.n_dim).astype(np.float32)  # pytype: disable=attribute-error
-    obs['pos_agent'][0] = obs['pos_agent'][0]/2
+    obs['pos_agent'][0] = obs['pos_agent'][0]/3
     #print("Initial pos : ",obs['pos_agent'])
     obs['vel_agent'] = np.zeros((self.n_dim)).astype(np.float32)  # pytype: disable=attribute-error
-    self.first_goal = np.array([0.5,0.5],dtype = np.float32)
-    self.second_goal = np.array([1,0.5],dtype = np.float32)
+    self.first_goal = np.array([0.5,0.2,0.5],dtype = np.float32)
+    self.second_goal = np.array([1,0.2,0.2],dtype = np.float32)
     # obs['pos_first_goal'] = self._rng.rand(self.n_dim).astype(np.float32)  # pytype: disable=attribute-error
     # obs['pos_second_goal'] = self._rng.rand(self.n_dim).astype(np.float32)  # pytype: disable=attribute-error
     #fix goal positions
@@ -184,7 +184,8 @@ class ParticleEnv(gym.Env):
     # u = k_p (x_{desired} - x) - k_v (xdot)
     # u_agent = self.k_p * (action - obs['pos_agent']) - self.k_v * (  # pytype: disable=attribute-error
     #     obs['vel_agent'])
-
+    #print("#### action : ",action)
+    #print("#### vel :",obs["vel_agent"])
     u_agent = self.k_p * (action - obs['vel_agent']) #- self.k_v * (obs['vel_agent'])
 
     new_xy_agent = obs['pos_agent'] + obs['vel_agent'] * self.dt  # pytype: disable=attribute-error
@@ -212,9 +213,13 @@ class ParticleEnv(gym.Env):
     def _reward(thresh):
       reward_first = True if self.min_dist_to_first_goal < thresh else False
       reward_second = True if self.min_dist_to_second_goal < thresh else False
+      # print("First : ",reward_first)
+      # print("second : ",reward_second)
+      # print("done : ",done)
       return 1.0 if (reward_first and reward_second and done) else 0.0
 
     reward = _reward(self.goal_distance)  # pytype: disable=attribute-error
+    # print("Reward : ",reward)
     return reward
 
   @property
@@ -235,6 +240,7 @@ class ParticleEnv(gym.Env):
     state = self._get_state()
     done = True if self.steps >= self.n_steps else False  # pytype: disable=attribute-error
     reward = self._get_reward(done)
+    # print("POS : ",state['pos_agent'])
     return state, reward, done, {}
 
   def render(self, mode='rgb_array'):

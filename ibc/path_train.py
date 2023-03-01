@@ -47,17 +47,24 @@ import numpy as np
 from tf_agents.trajectories import TimeStep
 import gym
 
-gym.envs.register(
-        id='pathfollow-v1',
-        entry_point='imitation.environments.path_follow_v1.path_follow_v1:PathFollowV1',
-        max_episode_steps=100,
-    )
+if 'path_follow_v1' in gym.envs.registration.registry.env_specs:
+  del gym.envs.registration.registry.env_specs['path_follow_v1']
 
-gym.envs.register(
-        id='pathfollow-v2',
-        entry_point='imitation.environments.path_follow_v2.path_follow_v2:PathFollowV2',
-        max_episode_steps=100,
-    )
+
+gym.envs.registration.register(
+    id="path_follow_v1",
+    entry_point="gym.envs.irl_classic_control.path_follow_v1:PathFollowV1",
+    max_episode_steps=150,
+)
+
+if 'path_follow_v3' in gym.envs.registration.registry.env_specs:
+  del gym.envs.registration.registry.env_specs['path_follow_v3']
+
+gym.envs.registration.register(
+    id="path_follow_v3",
+    entry_point="gym.envs.irl_classic_control.path_follow_v3:PathFollowV3",
+    max_episode_steps=150,
+)
 
 if 'Particle-v0' in gym.envs.registration.registry.env_specs:
   del gym.envs.registration.registry.env_specs['Particle-v0']

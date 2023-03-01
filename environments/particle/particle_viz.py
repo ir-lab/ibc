@@ -56,10 +56,10 @@ def visualize_2d(
     obs_log_ = obs_log
 
   # Visualize observations.
-  pos_first_goal = np.array([0.5,0.5],dtype=np.float32) #obs_log[0]['pos_first_goal']
+  pos_first_goal = np.array([0.5,0.2],dtype=np.float32) #obs_log[0]['pos_first_goal']
   ax.add_patch(plt.Circle(
       (pos_first_goal[0], pos_first_goal[1]), 0.01, color='g'))
-  pos_second_goal = np.array([0.9,0.5],dtype=np.float32) #obs_log[0]['pos_second_goal']
+  pos_second_goal = np.array([1,0.2],dtype=np.float32) #obs_log[0]['pos_second_goal']
   ax.add_patch(plt.Circle(
       (pos_second_goal[0], pos_second_goal[1]), 0.01, color='b'))
 
@@ -117,33 +117,33 @@ def visualize_nd(obs_log, act_log, axes=None, fig=None, show=True,
   for i in range(dims):
     axes[i].plot(
         np.arange(len(obs_log_)), obs_traj[:, i], 'black', label='agent')
-    axes[i].plot(
-        np.arange(len(obs_log_)),
-        obs_traj[:, i + 2 * dims],
-        'g',
-        label='1st_point')
-    axes[i].plot(
-        np.arange(len(obs_log_)),
-        obs_traj[:, i + 3 * dims],
-        'b',
-        label='2nd_point')
-    axes[i].scatter(
-        np.arange(len(obs_log_)),
-        act_traj[:, i],
-        marker='x',
-        s=100,
-        alpha=0.1,
-        label='agent_goal',
-        color='red')
+    # axes[i].plot(
+    #     np.arange(len(obs_log_)),
+    #     obs_traj[:, i + 2 * dims],
+    #     'g',
+    #     label='1st_point')
+    # axes[i].plot(
+    #     np.arange(len(obs_log_)),
+    #     obs_traj[:, i + 3 * dims],
+    #     'b',
+    #     label='2nd_point')
+    # axes[i].scatter(
+    #     np.arange(len(obs_log_)),
+    #     act_traj[:, i],
+    #     marker='x',
+    #     s=100,
+    #     alpha=0.1,
+    #     label='agent_goal',
+    #     color='red')
     if last_big:
       axes[i].scatter(len(obs_log_), obs_traj[-1, i],
                       marker='o', s=50, color='black')
-      axes[i].scatter(len(obs_log_), obs_traj[-1, i+2*dims],
-                      marker='o', s=50, color='g')
-      axes[i].scatter(len(obs_log_), obs_traj[-1, i+3*dims],
-                      marker='o', s=50, color='b')
-      axes[i].scatter(len(obs_log_), act_traj[-1, i],
-                      marker='x', s=100, color='red')
+      # axes[i].scatter(len(obs_log_), obs_traj[-1, i+2*dims],
+      #                 marker='o', s=50, color='g')
+      # axes[i].scatter(len(obs_log_), obs_traj[-1, i+3*dims],
+      #                 marker='o', s=50, color='b')
+      # axes[i].scatter(len(obs_log_), act_traj[-1, i],
+      #                 marker='x', s=100, color='red')
   if show:
     plt.legend()
     plt.show()

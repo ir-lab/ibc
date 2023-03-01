@@ -7,6 +7,6 @@ python3 ibc/data/policy_eval.py -- \
  --num_episodes=200 \
  --policy=particle_green_then_blue \
  --task=PARTICLE \
- --dataset_path=ibc/data/particle_tri/2d_oracle_particle.tfrecord \
+ --dataset_path=ibc/data/particle_3d/2d_oracle_particle.tfrecord \
  --replicas=10  \
  --use_image_obs=False

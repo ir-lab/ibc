@@ -53,15 +53,16 @@ class ParticleOracle(py_policy.PyPolicy):
     assert goal_threshold > 0.
     self.goal_threshold = goal_threshold
     self.multimodal = multimodal
-    self.scale = 5
+    self.scale = 2
     self.step = 0
     freq = 2
     w = 2 * np.pi * freq
-    #self.x_wave = np.linspace(0.5,1,20)
-    #self.y_wave = (0.1*np.sin(w*self.x_wave)) + 0.5
-    self.x_wave = np.array([0.5,0.8,1])
-    self.y_wave = np.array([0.5,0.6,0.5])
-    self.wave_fn = np.dstack((self.x_wave,self.y_wave))[0]
+    self.x_wave = np.linspace(0.5,1,9)
+    self.y_wave = (0.1*np.sin(w*self.x_wave)) + 0.2
+    self.z_wave = np.linspace(0.5,0.2,9)
+    #self.x_wave = np.array([0.5,0.7,0.9])
+    #self.y_wave = np.array([0.2,0.3,0.2])
+    self.wave_fn = np.dstack((self.x_wave,self.y_wave,self.z_wave))[0]
     self.reset()
 
   def reset(self):
@@ -82,7 +83,7 @@ class ParticleOracle(py_policy.PyPolicy):
     second_goal_key = self.goal_order[1]
     obs = time_step.observation
     #print("Pos Observation : ",obs['pos_agent'])
-    #gt_goals = self._env.obs_log[0]
+    gt_goals = self._env.obs_log[0]
 
     # dist = np.linalg.norm(obs['pos_agent'] - np.array([0.5,0.2],dtype = np.float32))  #gt_goals[first_goal_key]
     # if dist < self.goal_threshold:
@@ -99,7 +100,7 @@ class ParticleOracle(py_policy.PyPolicy):
     dist = np.linalg.norm(obs['pos_agent'] - self.wave_fn[self.fn_indx])
     final_dist = np.linalg.norm(obs['pos_agent'] - self.wave_fn[-1])
     if final_dist < self.goal_threshold:
-      return policy_step.PolicyStep(action=np.array([0,0],dtype=np.float32))
+      return policy_step.PolicyStep(action=np.array([0,0,0],dtype=np.float32))
   
     if dist < self.goal_threshold:
       self.fn_indx += 1
