@@ -46,6 +46,7 @@ from tf_agents.specs import tensor_spec
 import numpy as np
 from tf_agents.trajectories import TimeStep
 import gym
+import random
 
 if 'path_follow_v1' in gym.envs.registration.registry.env_specs:
   del gym.envs.registration.registry.env_specs['path_follow_v1']
@@ -173,7 +174,7 @@ def train_eval(
 
     obs_tensor_spec, action_tensor_spec, time_step_tensor_spec = (
         spec_utils.get_tensor_specs(eval_env))
-    #import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     # Compute normalization info from training data.
     create_train_and_eval_fns_unnormalized = data_module.get_data_fns(
         dataset_path,
@@ -300,6 +301,7 @@ def train_eval(
               eval_episodes,
               eval_env,
               eval_actor,
+              train_step,
               name_scope_suffix=f'_{env_name}')
           proto_name = os.path.join(proto_path,f"algo=ibc,train_step={train_step.numpy()},run={run}")
           eval_actor_class.write_to_protobuf(proto_name)
@@ -367,19 +369,21 @@ def validation_step(dist_eval_data_iter, bc_learner, train_step,
         losses_dict, step=train_step, name_scope='Eval_Losses/')
 
 
-def evaluation_step(eval_episodes, eval_env, eval_actor, name_scope_suffix=''):
+def evaluation_step(eval_episodes, eval_env, eval_actor, train_step,name_scope_suffix=''):
   """Evaluates the agent in the environment."""
   logging.info('Evaluating policy.')
   with tf.name_scope('eval' + name_scope_suffix):
     # This will eval on seeds:
     # [0, 1, ..., eval_episodes-1]
     for eval_seed in range(eval_episodes):
-      #eval_env.seed(eval_seed)
+      eval_env.seed(eval_seed)
+      print("seed : ",eval_seed)      ## DO NOT REMOVE THIS PRINT
       eval_actor.reset()  # With the new seed, the env actually needs reset.
       #import pdb; pdb.set_trace()
       #eval_actor._time_step = eval_actor._env.reset(dict([('low',-0.4),('high',0.4)]))
       #eval_actor._policy_state = eval_actor._policy.get_initial_state(eval_actor._env.batch_size or 1)
       eval_actor.run()
+      if eval_seed == 3: eval_env.export_gif(f"{train_step.numpy()}")
 
     eval_actor.log_metrics()
     eval_actor.write_metric_summaries()

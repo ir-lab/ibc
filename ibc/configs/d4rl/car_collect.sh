@@ -6,7 +6,7 @@
 # --video=True \
 python3 ibc/data/car_policy.py -- \
  --alsologtostderr \
- --num_episodes=50 \
- --policy=car_oracles \
+ --num_episodes=1 \
+ --policy=random \
  --task=CAR \
  --use_image_obs=False \

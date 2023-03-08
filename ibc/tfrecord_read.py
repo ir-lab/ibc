@@ -1,13 +1,14 @@
 import tensorflow as tf
 from tf_agents.utils import example_encoding
 from tf_agents.utils import example_encoding_dataset
+from tf_agents.specs.tensor_spec import to_pbtxt_file
 from gail.policyopt import Trajectory, TrajBatch
 from utils.proto_tools import proto_logger
 import numpy as np
 import os
 
-filename = "./ibc/data/particle_3d/2d_oracle_particle_0.tfrecord"
-spec_path = "./ibc/data/particle_3d/2d_oracle_particle_0.tfrecord.spec"
+filename = "./ibc/data/bimanual/2d_oracle_particle_0.tfrecord"
+spec_path = "./ibc/data/bimanual/2d_oracle_particle_0.tfrecord.spec"
 
 # filename = "./ibc/data/block_push_states_location_target/oracle_push_0.tfrecord"
 # spec_path = "./ibc/data/block_push_states_location_target/oracle_push_0.tfrecord.spec"
@@ -18,12 +19,18 @@ root_dir = '/home/docker/irl_control_container/libraries/algorithms/ibc/data/par
 
 spec = example_encoding_dataset.parse_encoded_spec_from_file(
         spec_path)
+
+# output_path = './ibc/data/bimanual/bimanual_v1.pbtxt'
+# to_pbtxt_file(output_path, spec)
+
 decoder = example_encoding.get_example_decoder(spec, batched=False,
                                                  compress_image=True)
 
 raw_dataset = tf.data.TFRecordDataset(filename)
 
 dataset = raw_dataset.map(decoder)
+
+
 epi = []
 obs = []
 act = []

@@ -57,7 +57,7 @@ flags.DEFINE_string('output_path', '/tmp/ibc/policy_eval/',
 flags.DEFINE_enum(
     'task', None,
     ['REACH', 'PUSH', 'INSERT', 'REACH_NORMALIZED', 'PUSH_NORMALIZED',
-     'PARTICLE', 'PUSH_DISCONTINUOUS', 'PUSH_MULTIMODAL'],
+     'PARTICLE', 'PUSH_DISCONTINUOUS', 'PUSH_MULTIMODAL','bimanual_v1'],
     'Which task of the enum to evaluate.')
 flags.DEFINE_bool('use_image_obs', False,
                   'Whether to include image observations.')
@@ -108,6 +108,9 @@ def evaluate(num_episodes,
   elif task == 'PARTICLE':
     # Options are supported through gin, registered env is the same.
     env_name = 'Particle-v0'
+  elif task == 'bimanual_v1':
+    # Options are supported through gin, registered env is the same.
+    env_name = 'bimanual_v1'
     assert not (shared_memory or use_image_obs)  # Not supported.
   else:
     raise ValueError("I don't recognize this task to eval.")
@@ -164,8 +167,8 @@ def evaluate(num_episodes,
       py_metrics.AverageReturnMetric(buffer_size=num_episodes),
       py_metrics.AverageEpisodeLengthMetric(buffer_size=num_episodes),
   ]
-  env_metrics, success_metric = env.get_metrics(num_episodes)
-  metrics += env_metrics
+  #env_metrics, success_metric = env.get_metrics(num_episodes)
+  #metrics += env_metrics
 
   observers = metrics[:]
 
@@ -189,6 +192,7 @@ def evaluate(num_episodes,
   time_step = env.reset()
   initial_policy_state = policy.get_initial_state(1)
   driver.run(time_step, initial_policy_state)
+  env.export_gif("./expert")
   log = ['{0} = {1}'.format(m.name, m.result()) for m in metrics]
   logging.info('\n\t\t '.join(log))
 
