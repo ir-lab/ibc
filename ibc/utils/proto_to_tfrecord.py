@@ -136,7 +136,7 @@ def export_to_tfrecord(proto_file):
   for idx in range(len(traj.observations)):
     obs = np.vstack([x.value for x in traj.observations[idx].sub_lists]).T
     act = np.vstack([x.value for x in traj.actions[idx].sub_lists]).T
-    #import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     rewards = traj.rewards[idx].value
 
     for index in range(len(obs)):
@@ -161,10 +161,10 @@ def export_to_tfrecord(proto_file):
                             discount=np.array(1,dtype=np.float32))
       recorder(tensor_traj)
 
-tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/bimanual/bimanual_v1_0"
+tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/bimanual_single_sixdof/bimanual_sixdof"
 
-spec_path= "/home/docker/irl_control_container/libraries/algorithms/ibc/data/bimanual/spec_bimanual_v1.pbtxt"
-dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/bimanual_v1/bimanual_v1_b0.proto"
+spec_path= "/home/docker/irl_control_container/libraries/algorithms/ibc/data/bimanual_single_sixdof/bimanual_single_sixdof.pbtxt"
+dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/bimanual_single_sixdof_v2/bimanual_single_sixdof_v2.proto"
 dataspec = tensor_spec.from_pbtxt_file(spec_path)
 
 proto_files = tf.io.gfile.glob(dataset_path)

@@ -57,7 +57,7 @@ flags.DEFINE_string('output_path', '/tmp/ibc/policy_eval/',
 flags.DEFINE_enum(
     'task', None,
     ['REACH', 'PUSH', 'INSERT', 'REACH_NORMALIZED', 'PUSH_NORMALIZED',
-     'PARTICLE', 'PUSH_DISCONTINUOUS', 'PUSH_MULTIMODAL','bimanual_v1'],
+     'PARTICLE', 'PUSH_DISCONTINUOUS', 'PUSH_MULTIMODAL','bimanual_v1','bimanual_single_euler_v2'],
     'Which task of the enum to evaluate.')
 flags.DEFINE_bool('use_image_obs', False,
                   'Whether to include image observations.')
@@ -108,9 +108,9 @@ def evaluate(num_episodes,
   elif task == 'PARTICLE':
     # Options are supported through gin, registered env is the same.
     env_name = 'Particle-v0'
-  elif task == 'bimanual_v1':
+  elif task == 'bimanual_single_sixdof_v2':
     # Options are supported through gin, registered env is the same.
-    env_name = 'bimanual_v1'
+    env_name = 'bimanual_single_sixdof_v2'
     assert not (shared_memory or use_image_obs)  # Not supported.
   else:
     raise ValueError("I don't recognize this task to eval.")
@@ -187,12 +187,12 @@ def evaluate(num_episodes,
             policy.collect_data_spec,
             py_mode=True,
             compress_image=True))
-
+  #env.set_gif_recording(export_dir = "./",export_prefix="test",export_suffix="suff")
   driver = py_driver.PyDriver(env, policy, observers, max_episodes=num_episodes)
   time_step = env.reset()
   initial_policy_state = policy.get_initial_state(1)
   driver.run(time_step, initial_policy_state)
-  env.export_gif("./expert")
+  #env.export_gif_recording()
   log = ['{0} = {1}'.format(m.name, m.result()) for m in metrics]
   logging.info('\n\t\t '.join(log))
 

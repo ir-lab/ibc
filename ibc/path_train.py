@@ -383,7 +383,7 @@ def evaluation_step(eval_episodes, eval_env, eval_actor, train_step,name_scope_s
       #eval_actor._time_step = eval_actor._env.reset(dict([('low',-0.4),('high',0.4)]))
       #eval_actor._policy_state = eval_actor._policy.get_initial_state(eval_actor._env.batch_size or 1)
       eval_actor.run()
-      if eval_seed == 3: eval_env.export_gif(f"{train_step.numpy()}")
+      if eval_seed == 1: eval_env.export_gif_recording()
 
     eval_actor.log_metrics()
     eval_actor.write_metric_summaries()
