@@ -10,7 +10,7 @@ import time
 #         max_episode_steps=20000,
 #     )
 start_time = time.time()
-env = gym.make('bimanual_single_quat_v2')
+env = gym.make('insert_v1')
 
 # video_path = "/home/docker/irl_control_container/data/video"
 # video_recorder = VideoRecorder(env,video_path,)

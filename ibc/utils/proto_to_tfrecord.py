@@ -161,10 +161,10 @@ def export_to_tfrecord(proto_file):
                             discount=np.array(1,dtype=np.float32))
       recorder(tensor_traj)
 
-tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/bimanual_single_sixdof/bimanual_sixdof"
+tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/insert_v1_sixdof/bimanual_insert_v1_sixdof"
 
-spec_path= "/home/docker/irl_control_container/libraries/algorithms/ibc/data/bimanual_single_sixdof/bimanual_single_sixdof.pbtxt"
-dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/bimanual_single_sixdof_v2/bimanual_single_sixdof_v2.proto"
+spec_path= "/home/docker/irl_control_container/libraries/algorithms/ibc/data/insert_v1_sixdof/insert_v1_sixdof.pbtxt"
+dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/insert_v1_sixdof/insert_v1_sixdof.proto"
 dataspec = tensor_spec.from_pbtxt_file(spec_path)
 
 proto_files = tf.io.gfile.glob(dataset_path)
