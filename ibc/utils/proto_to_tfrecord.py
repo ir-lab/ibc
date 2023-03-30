@@ -161,7 +161,7 @@ def export_to_tfrecord(proto_file):
                             discount=np.array(1,dtype=np.float32))
       recorder(tensor_traj)
 
-tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/insert_v1_sixdof/bimanual_insert_v1_sixdof"
+tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/dual_insert_v3/dual_insert_v3"
 
 spec_path= "/home/docker/irl_control_container/libraries/algorithms/ibc/data/insert_v1_sixdof/insert_v1_sixdof.pbtxt"
 dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/insert_v1_sixdof/insert_v1_sixdof.proto"
