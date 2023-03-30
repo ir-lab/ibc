@@ -19,8 +19,10 @@ obs = env.reset()
 for i in range(1000):
     action = env.action_space.sample()
     obs,reward,done,_ = env.step(action)
-    if i == 500:
+    if i == 200 or i == 300:
         states = env.get_initial_targets()
+        print("####")
+        print(states['ur5right'].get_xyz())
         print("###RESET###")
         env.reset()
     #import pdb;pdb.set_trace()  

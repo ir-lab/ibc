@@ -16,155 +16,155 @@ sns.set()
 #                 /home/docker/irl_control_container/libraries/algorithms/ibc/data/particle/particel_dataset.npy
 #expert = np.load('/home/docker/irl_control_container/libraries/algorithms/ibc/data/particle_3d/particle_tri_dataset.npy',allow_pickle=True)
 
-expert_fname = '/home/docker/irl_control_container/data/expert_trajectories/bimanual_single_euler_v2/bimanual_single_euler_v2.proto'
+expert_fname = '/home/docker/irl_control_container/data/expert_trajectories/insert_v1_sixdof/insert_v1_sixdof.proto'
 expert_list = proto_logger.extract_to_trajs(expert_fname)
-expert = TrajBatch.FromTrajs(expert_list)
-proto_fname = "/home/docker/irl_control_container/data/ibc_eval/bimanual_single_euler_v2/2023-03-16_10:45:23/Trajectories/algo=ibc,train_step=3000,run=0.proto"
+# tb = TrajBatch.FromTrajs(expert_list)
+proto_fname = "/home/docker/irl_control_container/data/ibc_eval/insert_v1_sixdof/2023-03-30_06:43:31/Trajectories/algo=ibc,train_step=10000,run=0.proto"
 traj_list = proto_logger.extract_to_trajs(proto_fname)
 tb = TrajBatch.FromTrajs(traj_list)
 
-# fig1,ax = plt.subplots(4,2)
+fig1,ax = plt.subplots(3)
 
 # fig2 = plt.figure()
 # ax5 = plt.axes(projection='3d')
 
-# fig1.suptitle("IBC policy observations")
-# fig2.suptitle("IBC policy Trajectory")
+fig1.suptitle("IBC policy actions")
+# fig2.suptitle("Expert policy Trajectory")
 
-# fig3,ax3 = plt.subplots(3,2)
+fig3,ax3 = plt.subplots(3,2)
 
-# outline = []  # [5,7,12,16,17] #3d [14,6,7,17,12,13] #[5,7,12,16,17] # 
-# ibc_xpos = []
-# ibc_ypos = []
-# ibc_zpos = []
-# ibc_r = []
-# ibc_p = []
-# ibc_sin = []
-# ibc_cos = []
-# ibc_a = []
-# ibc_b = []
-# ibc_c = []
-# ibc_d = []
-# ibc_e = []
-# ibc_f = []
+outline = [] #np.arange(25,50)  # [5,7,12,16,17] #3d [14,6,7,17,12,13] #[5,7,12,16,17] #  35-45
+ibc_xpos = []
+ibc_ypos = []
+ibc_zpos = []
+ibc_r = []
+ibc_p = []
+ibc_sin = []
+ibc_cos = []
+ibc_a = []
+ibc_b = []
+ibc_c = []
+ibc_d = []
+ibc_e = []
+ibc_f = []
 
-# for episode in range(len(tb.obs)):
-#     if episode in outline: continue
-#     ee_x = []
-#     ee_y = []
-#     ee_z = []
-#     radius = []
-#     polar = []
-#     s_azi = []
-#     c_azi = []
-#     a = []
-#     b = []
-#     c = []
-#     d = []
-#     e = []
-#     f = []
-#     for step in range(len(tb.obs[episode])):
-#         # import pdb;pdb.set_trace()
-#         ee_x.append(tb.obs[episode][step][0])
-#         ee_y.append(tb.obs[episode][step][1])
-#         ee_z.append(tb.obs[episode][step][2])
-#         radius.append(tb.obs[episode][step][3])
-#         polar.append(tb.obs[episode][step][4])
-#         s_azi.append(tb.obs[episode][step][5])
-#         c_azi.append(tb.obs[episode][step][6])
-#         a.append(tb.obs[episode][step][7])
-#         b.append(tb.obs[episode][step][8])
-#         c.append(tb.obs[episode][step][9])
-#         d.append(tb.obs[episode][step][10])
-#         # e.append(tb.obs[episode][step][7])
-#         # f.append(tb.obs[episode][step][8])
-#     ax5.plot3D(ee_x,ee_y,ee_z)
+for episode in range(len(tb.obs)):
+    if episode in outline: continue
+    ee_x = []
+    ee_y = []
+    ee_z = []
+    radius = []
+    polar = []
+    s_azi = []
+    c_azi = []
+    a = []
+    b = []
+    c = []
+    d = []
+    e = []
+    f = []
+    for step in range(len(tb.obs[episode])):
+        # import pdb;pdb.set_trace()
+        ee_x.append(tb.a[episode][step][0])
+        ee_y.append(tb.a[episode][step][1])
+        ee_z.append(tb.a[episode][step][2])
+        # radius.append(tb.obs[episode][step][3])
+        # polar.append(tb.obs[episode][step][4])
+        # s_azi.append(tb.obs[episode][step][5])
+        # c_azi.append(tb.obs[episode][step][6])
+        a.append(tb.a[episode][step][3])
+        b.append(tb.a[episode][step][4])
+        c.append(tb.a[episode][step][5])
+        d.append(tb.a[episode][step][6])
+        e.append(tb.a[episode][step][7])
+        f.append(tb.a[episode][step][8])
+    # ax5.plot3D(ee_x,ee_y,ee_z)
     
-#     ibc_xpos.append(ee_x)
-#     ibc_ypos.append(ee_y)
-#     ibc_zpos.append(ee_z)
-#     ibc_r.append(radius)
-#     ibc_p.append(polar)
-#     ibc_sin.append(s_azi)
-#     ibc_cos.append(c_azi)
-#     step = np.arange(0,len(ee_x))
+    ibc_xpos.append(ee_x)
+    ibc_ypos.append(ee_y)
+    ibc_zpos.append(ee_z)
+    ibc_r.append(radius)
+    ibc_p.append(polar)
+    ibc_sin.append(s_azi)
+    ibc_cos.append(c_azi)
+    step = np.arange(0,len(ee_x)) #len(ee_x)
 #     # import pdb;pdb.set_trace()
 
-#     ax[0,0].plot(step,ee_x)
-#     ax[0,0].set(ylabel='del x')
+    ax[0].plot(step,ee_x)
+    ax[0].set(ylabel='del x')
 
-#     ax[1,0].plot(step,ee_y)
-#     ax[1,0].set(ylabel='del y')
+    ax[1].plot(step,ee_y)
+    ax[1].set(ylabel='del y')
 
-#     ax[2,0].plot(step,ee_z)
-#     ax[2,0].set(xlabel='step',ylabel='del z')
+    ax[2].plot(step,ee_z)
+    ax[2].set(xlabel='step',ylabel='del z')
 
-#     ax[0,1].plot(step,radius)
-#     ax[0,1].set(ylabel='radius')
+    # ax[0,1].plot(step,radius)
+    # ax[0,1].set(ylabel='radius')
 
-#     ax[1,1].plot(step,polar)
-#     ax[1,1].set(ylabel='polar')
+    # ax[1,1].plot(step,polar)
+    # ax[1,1].set(ylabel='polar')
     
-#     ax[2,1].plot(step,s_azi)
-#     ax[2,1].set(ylabel='sin azimuth')
+    # ax[2,1].plot(step,s_azi)
+    # ax[2,1].set(ylabel='sin azimuth')
 
-#     ax[3,1].plot(step,c_azi)
-#     ax[3,1].set(ylabel='cos azimuth')
-
-
-    # ax3[0,0].plot(step,a)
-    # ax3[0,0].set(ylabel='M1')
-
-    # ax3[0,1].plot(step,b)
-    # ax3[0,1].set(ylabel='M2')
-
-    # ax3[1,0].plot(step,c)
-    # ax3[1,0].set(ylabel='M3')
-
-    # ax3[1,1].plot(step,d)
-    # ax3[1,1].set(ylabel='M4')
-
-    # ax3[2,0].plot(step,e)
-    # ax3[2,0].set(xlabel='step',ylabel='del M5')
-
-    # ax3[2,1].plot(step,f)
-    # ax3[2,1].set(xlabel='step',ylabel='del M6')
+    # ax[3,1].plot(step,c_azi)
+    # ax[3,1].set(ylabel='cos azimuth')
 
 
-rewards = []
-for episode in range(len(tb.obs)):
-    total_r = 0
-    for step in range(len(tb.obs[episode])):
-        total_r += tb.r[episode][step]
-    # import pdb;pdb.set_trace()
-    rewards.append(total_r)
+    ax3[0,0].plot(step,a)
+    ax3[0,0].set(ylabel='del M1')
 
-ex_rewards = []
-for episode in range(len(expert.obs)):
-    total_r = 0
-    for step in range(len(expert.obs[episode])):
-        total_r += expert.r[episode][step]
-    ex_rewards.append(total_r)
+    ax3[0,1].plot(step,b)
+    ax3[0,1].set(ylabel='del M2')
 
-mean_r = np.mean(rewards)
-mean_ex_r = np.mean(ex_rewards)
+    ax3[1,0].plot(step,c)
+    ax3[1,0].set(ylabel='del M3')
 
-std_r = np.std(rewards)
-std_ex_r = np.std(ex_rewards)
+    ax3[1,1].plot(step,d)
+    ax3[1,1].set(ylabel='del M4')
 
-x_pos = np.arange(2)
-r = [mean_ex_r, mean_r]
-error = [std_ex_r,std_r]
+    ax3[2,0].plot(step,e)
+    ax3[2,0].set(xlabel='step',ylabel='del M5')
 
-labels = ['Expert', 'IBC']
-fig,ax = plt.subplots()
-ax.bar(x_pos, r, yerr=error, align='center', alpha=0.5, ecolor='black', capsize=10)
-ax.set_ylabel('Reward')
-ax.set_xticks(x_pos)
-ax.set_xticklabels(labels)
-ax.yaxis.grid(True)
+    ax3[2,1].plot(step,f)
+    ax3[2,1].set(xlabel='step',ylabel='del M6')
 
-plt.tight_layout()
+
+# rewards = []
+# for episode in range(len(tb.obs)):
+#     total_r = 0
+#     for step in range(len(tb.obs[episode])):
+#         total_r += tb.r[episode][step]
+#     # import pdb;pdb.set_trace()
+#     rewards.append(total_r)
+
+# ex_rewards = []
+# for episode in range(len(expert.obs)):
+#     total_r = 0
+#     for step in range(len(expert.obs[episode])):
+#         total_r += expert.r[episode][step]
+#     ex_rewards.append(total_r)
+
+# mean_r = np.mean(rewards)
+# mean_ex_r = np.mean(ex_rewards)
+
+# std_r = np.std(rewards)
+# std_ex_r = np.std(ex_rewards)
+
+# x_pos = np.arange(2)
+# r = [mean_ex_r, mean_r]
+# error = [std_ex_r,std_r]
+
+# labels = ['Expert', 'IBC']
+# fig,ax = plt.subplots()
+# ax.bar(x_pos, r, yerr=error, align='center', alpha=0.5, ecolor='black', capsize=10)
+# ax.set_ylabel('Reward')
+# ax.set_xticks(x_pos)
+# ax.set_xticklabels(labels)
+# ax.yaxis.grid(True)
+
+# plt.tight_layout()
 
 
 
