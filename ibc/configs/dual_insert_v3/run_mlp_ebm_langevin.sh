@@ -9,5 +9,5 @@ python3 ibc/ibc/path_train.py -- \
   --task=dual_insert_v3 \
   --tag=dual_insert_v3 \
   --add_time=True \
-  --gin_bindings="train_eval.dataset_path='ibc/data/dual_insert_v3/dual_insert*.tfrecord'" \
+  --gin_bindings="train_eval.dataset_path='ibc/data/dual_insert_v3/dual_insert_v3_quat.tfrecord'" \
 

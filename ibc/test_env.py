@@ -10,7 +10,7 @@ import time
 #         max_episode_steps=20000,
 #     )
 start_time = time.time()
-env = gym.make('insert_v1')
+env = gym.make('dual_insert_v3')
 
 # video_path = "/home/docker/irl_control_container/data/video"
 # video_recorder = VideoRecorder(env,video_path,)
@@ -20,11 +20,8 @@ for i in range(1000):
     action = env.action_space.sample()
     obs,reward,done,_ = env.step(action)
     if i == 200 or i == 300:
-        states = env.get_initial_targets()
-        print("####")
-        print(states['ur5right'].get_xyz())
-        print("###RESET###")
-        env.reset()
+        obs = env.reset()
+        print("Obs : ",obs)
     #import pdb;pdb.set_trace()  
     # print("Action : ",action)
     # print("Observation : ",obs)

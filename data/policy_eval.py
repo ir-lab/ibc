@@ -57,7 +57,7 @@ flags.DEFINE_string('output_path', '/tmp/ibc/policy_eval/',
 flags.DEFINE_enum(
     'task', None,
     ['REACH', 'PUSH', 'INSERT', 'REACH_NORMALIZED', 'PUSH_NORMALIZED',
-     'PARTICLE', 'PUSH_DISCONTINUOUS', 'PUSH_MULTIMODAL','bimanual_v1','insert_v1_sixdof'],
+     'PARTICLE', 'PUSH_DISCONTINUOUS', 'PUSH_MULTIMODAL','bimanual_v1','dual_insert_v3'],
     'Which task of the enum to evaluate.')
 flags.DEFINE_bool('use_image_obs', False,
                   'Whether to include image observations.')
@@ -108,9 +108,9 @@ def evaluate(num_episodes,
   elif task == 'PARTICLE':
     # Options are supported through gin, registered env is the same.
     env_name = 'Particle-v0'
-  elif task == 'insert_v1_sixdof':
+  elif task == 'dual_insert_v3':
     # Options are supported through gin, registered env is the same.
-    env_name = 'insert_v1_sixdof'
+    env_name = 'dual_insert_v3'
     assert not (shared_memory or use_image_obs)  # Not supported.
   else:
     raise ValueError("I don't recognize this task to eval.")

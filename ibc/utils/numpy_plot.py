@@ -16,127 +16,263 @@ sns.set()
 #                 /home/docker/irl_control_container/libraries/algorithms/ibc/data/particle/particel_dataset.npy
 #expert = np.load('/home/docker/irl_control_container/libraries/algorithms/ibc/data/particle_3d/particle_tri_dataset.npy',allow_pickle=True)
 
-expert_fname = '/home/docker/irl_control_container/data/expert_trajectories/insert_v1_sixdof/insert_v1_sixdof.proto'
+expert_fname = '/home/docker/irl_control_container/data/expert_trajectories/dual_insert_v3/dual_insert_v3_reduced_pos.proto'
 expert_list = proto_logger.extract_to_trajs(expert_fname)
 expert = TrajBatch.FromTrajs(expert_list)
-proto_fname = "/home/docker/irl_control_container/data/ibc_eval/insert_v1_sixdof/2023-03-30_06:43:31/Trajectories/algo=ibc,train_step=10000,run=0.proto"
+proto_fname = "/home/docker/irl_control_container/data/ibc_eval/dual_insert_v3/2023-04-13_00:42:54/Trajectories/algo=ibc,train_step=9000,run=0.proto"
 traj_list = proto_logger.extract_to_trajs(proto_fname)
 tb = TrajBatch.FromTrajs(traj_list)
 
-# fig1,ax = plt.subplots(3)
+# fig1,ax = plt.subplots(4)
+# fig2,ax2 = plt.subplots(4)
 
-# fig2 = plt.figure()
+# # fig3,ax3 = plt.subplots(3,2)
+# # fig4,ax4 = plt.subplots(3,2)
+
+# fig5 = plt.figure()
 # ax5 = plt.axes(projection='3d')
 
-# fig1.suptitle("Expert policy observations")
-# fig2.suptitle("Expert policy Trajectory")
+# fig1.suptitle("Expert policy left arm observations")
+# fig2.suptitle("Expert policy right arm observations")
 
-# fig3,ax3 = plt.subplots(3,2)
+# # fig3.suptitle("IBC policy left arm observations")
+# # fig4.suptitle("IBC policy right arm observations")
 
-# outline = [] #np.arange(25,50)  # [5,7,12,16,17] #3d [14,6,7,17,12,13] #[5,7,12,16,17] #  35-45
-# ibc_xpos = []
-# ibc_ypos = []
-# ibc_zpos = []
-# ibc_r = []
-# ibc_p = []
-# ibc_sin = []
-# ibc_cos = []
-# ibc_a = []
-# ibc_b = []
-# ibc_c = []
-# ibc_d = []
-# ibc_e = []
-# ibc_f = []
+# fig5.suptitle("Expert policy Trajectory")
+
+# outline = [6] #np.arange(25,50)  # [5,7,12,16,17] #3d [14,6,7,17,12,13] #[5,7,12,16,17] #  35-45
 
 # for episode in range(len(tb.obs)):
 #     if episode in outline: continue
-#     ee_x = []
-#     ee_y = []
-#     ee_z = []
-#     radius = []
-#     polar = []
-#     s_azi = []
-#     c_azi = []
-#     a = []
-#     b = []
-#     c = []
-#     d = []
-#     e = []
-#     f = []
+#     ee_x_l = []
+#     ee_y_l = []
+#     ee_z_l = []
+#     ee_x_r = []
+#     ee_y_r = []
+#     ee_z_r = []
+#     r_l = []
+#     a_l = []
+#     b_l = []
+#     c_l = []
+#     d_l = []
+#     e_l = []
+#     f_l = []
+#     r_r = []
+#     a_r = []
+#     b_r = []
+#     c_r = []
+#     d_r = []
+#     e_r = []
+#     f_r = []
 #     for step in range(len(tb.obs[episode])):
 #         # import pdb;pdb.set_trace()
-#         ee_x.append(tb.obs[episode][step][0])
-#         ee_y.append(tb.obs[episode][step][1])
-#         ee_z.append(tb.obs[episode][step][2])
-#         # radius.append(tb.obs[episode][step][3])
-#         # polar.append(tb.obs[episode][step][4])
-#         # s_azi.append(tb.obs[episode][step][5])
-#         # c_azi.append(tb.obs[episode][step][6])
-#         a.append(tb.obs[episode][step][3])
-#         b.append(tb.obs[episode][step][4])
-#         c.append(tb.obs[episode][step][5])
-#         d.append(tb.obs[episode][step][6])
-#         e.append(tb.obs[episode][step][7])
-#         f.append(tb.obs[episode][step][8])
-#     ax5.plot3D(ee_x,ee_y,ee_z)
-    
-#     ibc_xpos.append(ee_x)
-#     ibc_ypos.append(ee_y)
-#     ibc_zpos.append(ee_z)
-#     ibc_r.append(radius)
-#     ibc_p.append(polar)
-#     ibc_sin.append(s_azi)
-#     ibc_cos.append(c_azi)
-#     step = np.arange(0,len(ee_x)) #len(ee_x)
-# #     # import pdb;pdb.set_trace()
+#         ee_x_l.append(tb.obs[episode][step][0])
+#         ee_y_l.append(tb.obs[episode][step][1])
+#         ee_z_l.append(tb.obs[episode][step][2])
+#         r_l.append(tb.obs[episode][step][3])
+#         # a_l.append(tb.obs[episode][step][4])
+#         # b_l.append(tb.obs[episode][step][5])
+#         # c_l.append(tb.obs[episode][step][6])
+#         # d_l.append(tb.obs[episode][step][7])
+#         # e_l.append(tb.obs[episode][step][8])
+#         # f_l.append(tb.obs[episode][step][9])
 
-#     ax[0].plot(step,ee_x)
+
+#         ee_x_r.append(tb.obs[episode][step][4])
+#         ee_y_r.append(tb.obs[episode][step][5])
+#         ee_z_r.append(tb.obs[episode][step][6])
+#         r_r.append(tb.obs[episode][step][7])
+#         # a_r.append(tb.obs[episode][step][14])
+#         # b_r.append(tb.obs[episode][step][15])
+#         # c_r.append(tb.obs[episode][step][16])
+#         # d_r.append(tb.obs[episode][step][17])
+#         # e_r.append(tb.obs[episode][step][18])
+#         # f_r.append(tb.obs[episode][step][19])
+#     ax5.plot3D(ee_x_l,ee_y_l,ee_z_l)
+#     ax5.plot3D(ee_x_r,ee_y_r,ee_z_r)
+    
+#     step = np.arange(0,len(ee_x_l)) #len(ee_x)
+
+#     ax[0].plot(step,ee_x_l)
 #     ax[0].set(ylabel='del x')
 
-#     ax[1].plot(step,ee_y)
+#     ax[1].plot(step,ee_y_l)
 #     ax[1].set(ylabel='del y')
 
-#     ax[2].plot(step,ee_z)
+#     ax[2].plot(step,ee_z_l)
 #     ax[2].set(xlabel='step',ylabel='del z')
 
-#     # ax[0,1].plot(step,radius)
-#     # ax[0,1].set(ylabel='radius')
+#     ax[3].plot(step,r_l)
+#     ax[3].set(ylabel='radius')
 
-#     # ax[1,1].plot(step,polar)
-#     # ax[1,1].set(ylabel='polar')
-    
-#     # ax[2,1].plot(step,s_azi)
-#     # ax[2,1].set(ylabel='sin azimuth')
+#     ax2[0].plot(step,ee_x_r)
+#     ax2[0].set(ylabel='del x')
 
-#     # ax[3,1].plot(step,c_azi)
-#     # ax[3,1].set(ylabel='cos azimuth')
+#     ax2[1].plot(step,ee_y_r)
+#     ax2[1].set(ylabel='del y')
+
+#     ax2[2].plot(step,ee_z_r)
+#     ax2[2].set(xlabel='step',ylabel='del z')
+
+#     ax2[3].plot(step,r_r)
+#     ax2[3].set(ylabel='radius')
 
 
-#     ax3[0,0].plot(step,a)
+    # ax3[0,0].plot(step,a_l)
+    # ax3[0,0].set(ylabel='del M1')
+
+    # ax3[0,1].plot(step,b_l)
+    # ax3[0,1].set(ylabel='del M2')
+
+    # ax3[1,0].plot(step,c_l)
+    # ax3[1,0].set(ylabel='del M3')
+
+    # ax3[1,1].plot(step,d_l)
+    # ax3[1,1].set(ylabel='del M4')
+
+    # ax3[2,0].plot(step,e_l)
+    # ax3[2,0].set(xlabel='step',ylabel='del M5')
+
+    # ax3[2,1].plot(step,f_l)
+    # ax3[2,1].set(xlabel='step',ylabel='del M6')
+
+    # ax4[0,0].plot(step,a_r)
+    # ax4[0,0].set(ylabel='del M1')
+
+    # ax4[0,1].plot(step,b_r)
+    # ax4[0,1].set(ylabel='del M2')
+
+    # ax4[1,0].plot(step,c_r)
+    # ax4[1,0].set(ylabel='del M3')
+
+    # ax4[1,1].plot(step,d_r)
+    # ax4[1,1].set(ylabel='del M4')
+
+    # ax4[2,0].plot(step,e_r)
+    # ax4[2,0].set(xlabel='step',ylabel='del M5')
+
+    # ax4[2,1].plot(step,f_r)
+    # ax4[2,1].set(xlabel='step',ylabel='del M6')
+
+# fig1,ax = plt.subplots(3)
+# fig2,ax2 = plt.subplots(3)
+
+# # fig3,ax3 = plt.subplots(3,2)
+# # fig4,ax4 = plt.subplots(3,2)
+
+# fig1.suptitle("IBC policy left arm actions")
+# fig2.suptitle("IBC policy right arm actions")
+
+# # fig3.suptitle("Expert policy left arm actions")
+# # fig4.suptitle("Expert policy right arm actions")
+# outline = [6]
+
+# for episode in range(len(tb.a)):
+#     if episode in outline: continue
+#     l_pos_x = []
+#     l_pos_y = []
+#     l_pos_z = []
+#     a_l = []
+#     b_l = []
+#     c_l = []
+#     d_l = []
+#     e_l = []
+#     f_l = []
+#     r_pos_x = []
+#     r_pos_y = []
+#     r_pos_z = []
+#     a_r = []
+#     b_r = []
+#     c_r = []
+#     d_r = []
+#     e_r = []
+#     f_r = []
+#     for step in range(len(tb.a[episode])):
+#         # import pdb;pdb.set_trace()
+#         l_pos_x.append(tb.a[episode][step][0])
+#         l_pos_y.append(tb.a[episode][step][1])
+#         l_pos_z.append(tb.a[episode][step][2])
+#         # a_l.append(tb.a[episode][step][3])
+#         # b_l.append(tb.a[episode][step][4])
+#         # c_l.append(tb.a[episode][step][5])
+#         # d_l.append(tb.a[episode][step][6])
+#         # e_l.append(tb.a[episode][step][7])
+#         # f_l.append(tb.a[episode][step][8])
+
+#         r_pos_x.append(tb.a[episode][step][3])
+#         r_pos_y.append(tb.a[episode][step][4])
+#         r_pos_z.append(tb.a[episode][step][5])
+#         # a_r.append(tb.a[episode][step][12])
+#         # b_r.append(tb.a[episode][step][13])
+#         # c_r.append(tb.a[episode][step][14])
+#         # d_r.append(tb.a[episode][step][15])
+#         # e_r.append(tb.a[episode][step][16])
+#         # f_r.append(tb.a[episode][step][17])
+#         # import pdb;pdb.set_trace()
+#     step = np.arange(0,len(l_pos_x))
+#     # print("Episode length : ",len(step))
+#     ax[0].plot(step,l_pos_x)
+#     ax[0].set(ylabel='del x')
+
+#     ax[1].plot(step,l_pos_y)
+#     ax[1].set(ylabel='del y')
+
+#     ax[2].plot(step,l_pos_z)
+#     ax[2].set(xlabel='step',ylabel='del z')
+
+#     ax2[0].plot(step,r_pos_x)
+#     ax2[0].set(ylabel='del x')
+
+#     ax2[1].plot(step,r_pos_y)
+#     ax2[1].set(ylabel='del y')
+
+#     ax2[2].plot(step,r_pos_z)
+#     ax2[2].set(xlabel='step',ylabel='del z')
+
+#     ax3[0,0].plot(step,a_l)
 #     ax3[0,0].set(ylabel='del M1')
 
-#     ax3[0,1].plot(step,b)
+#     ax3[0,1].plot(step,b_l)
 #     ax3[0,1].set(ylabel='del M2')
 
-#     ax3[1,0].plot(step,c)
+#     ax3[1,0].plot(step,c_l)
 #     ax3[1,0].set(ylabel='del M3')
 
-#     ax3[1,1].plot(step,d)
+#     ax3[1,1].plot(step,d_l)
 #     ax3[1,1].set(ylabel='del M4')
 
-#     ax3[2,0].plot(step,e)
+#     ax3[2,0].plot(step,e_l)
 #     ax3[2,0].set(xlabel='step',ylabel='del M5')
 
-#     ax3[2,1].plot(step,f)
+#     ax3[2,1].plot(step,f_l)
 #     ax3[2,1].set(xlabel='step',ylabel='del M6')
 
+#     ax4[0,0].plot(step,a_r)
+#     ax4[0,0].set(ylabel='del M1')
 
+#     ax4[0,1].plot(step,b_r)
+#     ax4[0,1].set(ylabel='del M2')
+
+#     ax4[1,0].plot(step,c_r)
+#     ax4[1,0].set(ylabel='del M3')
+
+#     ax4[1,1].plot(step,d_r)
+#     ax4[1,1].set(ylabel='del M4')
+
+#     ax4[2,0].plot(step,e_r)
+#     ax4[2,0].set(xlabel='step',ylabel='del M5')
+
+#     ax4[2,1].plot(step,f_r)
+#     ax4[2,1].set(xlabel='step',ylabel='del M6')
+
+outline = [6]
 rewards = []
 for episode in range(len(tb.obs)):
+    if episode in outline: continue
     total_r = 0
     for step in range(len(tb.obs[episode])):
         total_r += tb.r[episode][step]
-    # import pdb;pdb.set_trace()
+    print("reward : ",total_r)
     rewards.append(total_r)
 
 ex_rewards = []
