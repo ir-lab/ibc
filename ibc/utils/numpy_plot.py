@@ -16,12 +16,12 @@ sns.set()
 #                 /home/docker/irl_control_container/libraries/algorithms/ibc/data/particle/particel_dataset.npy
 #expert = np.load('/home/docker/irl_control_container/libraries/algorithms/ibc/data/particle_3d/particle_tri_dataset.npy',allow_pickle=True)
 
-expert_fname = '/home/docker/irl_control_container/data/expert_trajectories/dual_insert_v3/dual_insert_v3_reduced_pos.proto'
+expert_fname = '/home/docker/irl_control_container/data/expert_trajectories/quad_insert_v1/quad_insert_v1_new.proto'
 expert_list = proto_logger.extract_to_trajs(expert_fname)
-expert = TrajBatch.FromTrajs(expert_list)
+tb = TrajBatch.FromTrajs(expert_list)
 proto_fname = "/home/docker/irl_control_container/data/ibc_eval/dual_insert_v3/2023-04-13_00:42:54/Trajectories/algo=ibc,train_step=9000,run=0.proto"
 traj_list = proto_logger.extract_to_trajs(proto_fname)
-tb = TrajBatch.FromTrajs(traj_list)
+# tb = TrajBatch.FromTrajs(traj_list)
 
 # fig1,ax = plt.subplots(4)
 # fig2,ax2 = plt.subplots(4)
@@ -29,8 +29,13 @@ tb = TrajBatch.FromTrajs(traj_list)
 # # fig3,ax3 = plt.subplots(3,2)
 # # fig4,ax4 = plt.subplots(3,2)
 
+<<<<<<< Updated upstream
 # fig5 = plt.figure()
 # ax5 = plt.axes(projection='3d')
+=======
+fig5 = plt.figure()
+ax5 = plt.axes(projection='3d')
+>>>>>>> Stashed changes
 
 # fig1.suptitle("Expert policy left arm observations")
 # fig2.suptitle("Expert policy right arm observations")
@@ -38,6 +43,7 @@ tb = TrajBatch.FromTrajs(traj_list)
 # # fig3.suptitle("IBC policy left arm observations")
 # # fig4.suptitle("IBC policy right arm observations")
 
+<<<<<<< Updated upstream
 # fig5.suptitle("Expert policy Trajectory")
 
 # outline = [6] #np.arange(25,50)  # [5,7,12,16,17] #3d [14,6,7,17,12,13] #[5,7,12,16,17] #  35-45
@@ -50,6 +56,20 @@ tb = TrajBatch.FromTrajs(traj_list)
 #     ee_x_r = []
 #     ee_y_r = []
 #     ee_z_r = []
+=======
+fig5.suptitle("Expert policy Trajectory")
+
+outline = [] #np.arange(25,50)  # [5,7,12,16,17] #3d [14,6,7,17,12,13] #[5,7,12,16,17] #  35-45
+
+for episode in range(len(tb.obs)):
+    if episode in outline: continue
+    ee_x_l = []
+    ee_y_l = []
+    ee_z_l = []
+    ee_x_r = []
+    ee_y_r = []
+    ee_z_r = []
+>>>>>>> Stashed changes
 #     r_l = []
 #     a_l = []
 #     b_l = []
@@ -64,11 +84,19 @@ tb = TrajBatch.FromTrajs(traj_list)
 #     d_r = []
 #     e_r = []
 #     f_r = []
+<<<<<<< Updated upstream
 #     for step in range(len(tb.obs[episode])):
 #         # import pdb;pdb.set_trace()
 #         ee_x_l.append(tb.obs[episode][step][0])
 #         ee_y_l.append(tb.obs[episode][step][1])
 #         ee_z_l.append(tb.obs[episode][step][2])
+=======
+    for step in range(len(tb.obs[episode])):
+        # import pdb;pdb.set_trace()
+        ee_x_l.append(tb.obs[episode][step][13])
+        ee_y_l.append(tb.obs[episode][step][14])
+        ee_z_l.append(tb.obs[episode][step][15])
+>>>>>>> Stashed changes
 #         r_l.append(tb.obs[episode][step][3])
 #         # a_l.append(tb.obs[episode][step][4])
 #         # b_l.append(tb.obs[episode][step][5])
@@ -78,9 +106,15 @@ tb = TrajBatch.FromTrajs(traj_list)
 #         # f_l.append(tb.obs[episode][step][9])
 
 
+<<<<<<< Updated upstream
 #         ee_x_r.append(tb.obs[episode][step][4])
 #         ee_y_r.append(tb.obs[episode][step][5])
 #         ee_z_r.append(tb.obs[episode][step][6])
+=======
+        ee_x_r.append(tb.obs[episode][step][32])
+        ee_y_r.append(tb.obs[episode][step][33])
+        ee_z_r.append(tb.obs[episode][step][34])
+>>>>>>> Stashed changes
 #         r_r.append(tb.obs[episode][step][7])
 #         # a_r.append(tb.obs[episode][step][14])
 #         # b_r.append(tb.obs[episode][step][15])
@@ -88,8 +122,13 @@ tb = TrajBatch.FromTrajs(traj_list)
 #         # d_r.append(tb.obs[episode][step][17])
 #         # e_r.append(tb.obs[episode][step][18])
 #         # f_r.append(tb.obs[episode][step][19])
+<<<<<<< Updated upstream
 #     ax5.plot3D(ee_x_l,ee_y_l,ee_z_l)
 #     ax5.plot3D(ee_x_r,ee_y_r,ee_z_r)
+=======
+    ax5.plot3D(ee_x_l,ee_y_l,ee_z_l)
+    ax5.plot3D(ee_x_r,ee_y_r,ee_z_r)
+>>>>>>> Stashed changes
     
 #     step = np.arange(0,len(ee_x_l)) #len(ee_x)
 
@@ -265,6 +304,7 @@ tb = TrajBatch.FromTrajs(traj_list)
 #     ax4[2,1].plot(step,f_r)
 #     ax4[2,1].set(xlabel='step',ylabel='del M6')
 
+<<<<<<< Updated upstream
 outline = [6]
 rewards = []
 for episode in range(len(tb.obs)):
@@ -301,6 +341,44 @@ ax.set_xticklabels(labels)
 ax.yaxis.grid(True)
 
 plt.tight_layout()
+=======
+# outline = [6]
+# rewards = []
+# for episode in range(len(tb.obs)):
+#     if episode in outline: continue
+#     total_r = 0
+#     for step in range(len(tb.obs[episode])):
+#         total_r += tb.r[episode][step]
+#     print("reward : ",total_r)
+#     rewards.append(total_r)
+
+# ex_rewards = []
+# for episode in range(len(expert.obs)):
+#     total_r = 0
+#     for step in range(len(expert.obs[episode])):
+#         total_r += expert.r[episode][step]
+#     ex_rewards.append(total_r)
+
+# mean_r = np.mean(rewards)
+# mean_ex_r = np.mean(ex_rewards)
+
+# std_r = np.std(rewards)
+# std_ex_r = np.std(ex_rewards)
+# # import pdb;pdb.set_trace()
+# x_pos = np.arange(2)
+# r = [mean_ex_r, mean_r]
+# error = [std_ex_r,std_r]
+
+# labels = ['Expert', 'IBC']
+# fig,ax = plt.subplots()
+# ax.bar(x_pos, r, yerr=error, align='center', alpha=0.5, ecolor='black', capsize=10)
+# ax.set_ylabel('Reward')
+# ax.set_xticks(x_pos)
+# ax.set_xticklabels(labels)
+# ax.yaxis.grid(True)
+
+# plt.tight_layout()
+>>>>>>> Stashed changes
 
 
 
@@ -348,6 +426,10 @@ plt.tight_layout()
 # ax3.set(xlabel='step',ylabel='z position')
 # ax3.legend()
 
+<<<<<<< Updated upstream
 plt.show()
 
 
+=======
+plt.show()
+>>>>>>> Stashed changes

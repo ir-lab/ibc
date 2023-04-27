@@ -10,7 +10,11 @@ import time
 #         max_episode_steps=20000,
 #     )
 start_time = time.time()
-env = gym.make('dual_insert_v3')
+env = gym.make('quad_insert_v1')
+export_dir = "/home/docker/irl_control_container/libraries/algorithms/ibc/gif"
+export_prefix = 'test_run'
+export_suffix = 'init'
+env.set_gif_recording(export_dir,export_prefix,export_suffix)
 
 # video_path = "/home/docker/irl_control_container/data/video"
 # video_recorder = VideoRecorder(env,video_path,)
@@ -20,7 +24,10 @@ for i in range(1000):
     action = env.action_space.sample()
     obs,reward,done,_ = env.step(action)
     if i == 200 or i == 300:
+        env.export_gif_recording()
         obs = env.reset()
+        export_suffix = str(i)
+        env.set_gif_recording(export_dir,export_prefix,export_suffix)
         print("Obs : ",obs)
     #import pdb;pdb.set_trace()  
     # print("Action : ",action)

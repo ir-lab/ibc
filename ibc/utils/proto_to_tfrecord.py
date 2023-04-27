@@ -161,10 +161,10 @@ def export_to_tfrecord(proto_file):
                             discount=np.array(1,dtype=np.float32))
       recorder(tensor_traj)
 
-tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/dual_insert_v3/dual_insert_v3_quat"
+tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/quad_insert_v1/quad_insert_v1_final"
 
-spec_path= "/home/docker/irl_control_container/libraries/algorithms/ibc/data/dual_insert_v3/bimanual_dual_insert_v3_quat.pbtxt"
-dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/dual_insert_v3/dual_insert_v3_reduced_quat.proto"
+spec_path= "/home/docker/irl_control_container/libraries/algorithms/ibc/data/quad_insert_v1/quad_insert_spec.pbtxt"
+dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/quad_insert_v1/quad_insert_v1_final.proto"
 dataspec = tensor_spec.from_pbtxt_file(spec_path)
 
 proto_files = tf.io.gfile.glob(dataset_path)
