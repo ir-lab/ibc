@@ -7,8 +7,8 @@ from utils.proto_tools import proto_logger
 import numpy as np
 import os
 
-filename = "./ibc/data/dual_insert_v3/2d_oracle_particle_0.tfrecord"
-spec_path = "./ibc/data/dual_insert_v3/2d_oracle_particle_0.tfrecord.spec"
+filename = "./ibc/data/quad_insert_v1/2d_oracle_0.tfrecord"
+spec_path = "./ibc/data/quad_insert_v1/2d_oracle_0.tfrecord.spec"
 
 # filename = "./ibc/data/block_push_states_location_target/oracle_push_0.tfrecord"
 # spec_path = "./ibc/data/block_push_states_location_target/oracle_push_0.tfrecord.spec"
@@ -20,7 +20,7 @@ EXPERT_TRAJ_DIR = "./"
 spec = example_encoding_dataset.parse_encoded_spec_from_file(
         spec_path)
 
-output_path = './ibc/data/dual_insert_v3/bimanual_dual_insert_v3_new.pbtxt'
+output_path = './ibc/data/quad_insert_v1/quad_insert_force.pbtxt'
 to_pbtxt_file(output_path, spec)
 
 

@@ -375,8 +375,8 @@ def evaluation_step(eval_episodes, eval_env, eval_actor, train_step,name_scope_s
   with tf.name_scope('eval' + name_scope_suffix):
     # This will eval on seeds:
     # [0, 1, ..., eval_episodes-1]
-    export_dir = "/home/docker/irl_control_container/libraries/algorithms/ibc/gif/run9"
-    export_prefix = 'quad_insert_run9'
+    export_dir = "/home/docker/irl_control_container/libraries/algorithms/ibc/gif/force7"
+    export_prefix = 'quad_insert_run18'
     for eval_seed in range(eval_episodes):
       eval_env.seed(eval_seed)
       print("seed : ",eval_seed)      ## DO NOT REMOVE THIS PRINT

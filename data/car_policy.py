@@ -241,7 +241,7 @@ def evaluate(num_episodes,
   time_step = env.reset()
   initial_policy_state = policy.get_initial_state(1)
   driver.run(time_step, initial_policy_state)
-  env.export_gif("dcb")
+  # env.export_gif("dcb")
   proto_path = '/home/docker/irl_control_container/data/expert_trajectories'
   proto_name = os.path.join(proto_path,"lol")
   proto_logger.write_to_protobuf(proto_name)
