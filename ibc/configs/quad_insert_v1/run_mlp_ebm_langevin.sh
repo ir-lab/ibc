@@ -9,5 +9,5 @@ python3 ibc/ibc/mujoco_train.py -- \
   --task=quad_insert_v1 \
   --tag=quad_insert_v1 \
   --add_time=True \
-  --gin_bindings="train_eval.dataset_path='ibc/data/quad_insert_v1/quad_insert_v1_force2*.tfrecord'" \
+  --gin_bindings="train_eval.dataset_path='ibc/data/quad_insert_v1/quad_insert_v1_force3*.tfrecord'" \
 

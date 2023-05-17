@@ -16,94 +16,94 @@ sns.set()
 #                 /home/docker/irl_control_container/libraries/algorithms/ibc/data/particle/particel_dataset.npy
 #expert = np.load('/home/docker/irl_control_container/libraries/algorithms/ibc/data/particle_3d/particle_tri_dataset.npy',allow_pickle=True)
 
-expert_fname = '/home/docker/irl_control_container/data/expert_trajectories/quad_insert_v1/force/quad_insert_v1_force2.proto'
+expert_fname = '/home/docker/irl_control_container/data/expert_trajectories/quad_insert_v1/force/quad_insert_v1_force3.proto'
 expert_list = proto_logger.extract_to_trajs(expert_fname)
-# tb = TrajBatch.FromTrajs(expert_list)
-proto_fname = "/home/docker/irl_control_container/data/ibc_eval/quad_insert_v1/2023-05-10_20:42:19/Trajectories/algo=ibc,train_step=12000,run=0.proto"
+expert = TrajBatch.FromTrajs(expert_list)
+proto_fname = "/home/docker/irl_control_container/data/ibc_eval/quad_insert_v1/2023-05-17_01:06:17/Trajectories/algo=ibc,train_step=15000,run=0.proto"
 traj_list = proto_logger.extract_to_trajs(proto_fname)
 tb = TrajBatch.FromTrajs(traj_list)
 
 # fig1,ax = plt.subplots(4)
 # fig2,ax2 = plt.subplots(4)
 
-fig3,ax3 = plt.subplots(6,4)
-# fig4,ax4 = plt.subplots(5,4)
+# fig3,ax3 = plt.subplots(6,4)
+# # fig4,ax4 = plt.subplots(5,4)
 
-fig5 = plt.figure()
-ax5 = plt.axes(projection='3d')
+# fig5 = plt.figure()
+# ax5 = plt.axes(projection='3d')
 
-# fig1.suptitle("Expert policy left arm observations")
-# fig2.suptitle("Expert policy right arm observations")
+# # fig1.suptitle("Expert policy left arm observations")
+# # fig2.suptitle("Expert policy right arm observations")
 
-fig3.suptitle("IBC policy left arm observations")
-# # fig4.suptitle("IBC policy right arm observations")
+# fig3.suptitle("IBC policy left arm observations")
+# # # fig4.suptitle("IBC policy right arm observations")
 
-fig5.suptitle("IBC policy Trajectory")
+# fig5.suptitle("IBC policy Trajectory")
 
-outline = [] #np.arange(25,50)  # [5,7,12,16,17] #3d [14,6,7,17,12,13] #[5,7,12,16,17] #  35-45
+# outline = [] #np.arange(25,50)  # [5,7,12,16,17] #3d [14,6,7,17,12,13] #[5,7,12,16,17] #  35-45
 
-for episode in range(len(tb.obs)):
-    if episode in outline: continue
-    ee_x_l = []
-    ee_y_l = []
-    ee_z_l = []
-    ee_x_r = []
-    ee_y_r = []
-    ee_z_r = []
-    obs_val = [0]*41
-    for i in range(41):
-        obs_val[i] = []
-    for step in range(len(tb.obs[episode])):
-        # import pdb;pdb.set_trace()
-        ee_x_l.append(tb.obs[episode][step][13])
-        ee_y_l.append(tb.obs[episode][step][14])
-        ee_z_l.append(tb.obs[episode][step][15])
+# for episode in range(len(tb.obs)):
+#     if episode in outline: continue
+#     ee_x_l = []
+#     ee_y_l = []
+#     ee_z_l = []
+#     ee_x_r = []
+#     ee_y_r = []
+#     ee_z_r = []
+#     obs_val = [0]*41
+#     for i in range(41):
+#         obs_val[i] = []
+#     for step in range(len(tb.obs[episode])):
+#         # import pdb;pdb.set_trace()
+#         ee_x_l.append(tb.obs[episode][step][13])
+#         ee_y_l.append(tb.obs[episode][step][14])
+#         ee_z_l.append(tb.obs[episode][step][15])
 
-        ee_x_r.append(tb.obs[episode][step][35])
-        ee_y_r.append(tb.obs[episode][step][36])
-        ee_z_r.append(tb.obs[episode][step][37])
+#         ee_x_r.append(tb.obs[episode][step][35])
+#         ee_y_r.append(tb.obs[episode][step][36])
+#         ee_z_r.append(tb.obs[episode][step][37])
 
-        for i in range(41):
-            obs_val[i].append(tb.obs[episode][step][i])
-#         r_r.append(tb.obs[episode][step][7])
-#         # a_r.append(tb.obs[episode][step][14])
-#         # b_r.append(tb.obs[episode][step][15])
-#         # c_r.append(tb.obs[episode][step][16])
-#         # d_r.append(tb.obs[episode][step][17])
-#         # e_r.append(tb.obs[episode][step][18])
-#         # f_r.append(tb.obs[episode][step][19])
-    ax5.plot3D(ee_x_l,ee_y_l,ee_z_l)
-    ax5.plot3D(ee_x_r,ee_y_r,ee_z_r)
+#         for i in range(41):
+#             obs_val[i].append(tb.obs[episode][step][i])
+# #         r_r.append(tb.obs[episode][step][7])
+# #         # a_r.append(tb.obs[episode][step][14])
+# #         # b_r.append(tb.obs[episode][step][15])
+# #         # c_r.append(tb.obs[episode][step][16])
+# #         # d_r.append(tb.obs[episode][step][17])
+# #         # e_r.append(tb.obs[episode][step][18])
+# #         # f_r.append(tb.obs[episode][step][19])
+#     ax5.plot3D(ee_x_l,ee_y_l,ee_z_l)
+#     ax5.plot3D(ee_x_r,ee_y_r,ee_z_r)
     
-    step = np.arange(0,len(ee_x_l)) #len(ee_x)
+#     step = np.arange(0,len(ee_x_l)) #len(ee_x)
 
-    ax3[0,0].plot(step,obs_val[0])
-    ax3[0,1].plot(step,obs_val[1])
-    ax3[0,2].plot(step,obs_val[2])
-    ax3[0,3].plot(step,obs_val[3])
+#     ax3[0,0].plot(step,obs_val[0])
+#     ax3[0,1].plot(step,obs_val[1])
+#     ax3[0,2].plot(step,obs_val[2])
+#     ax3[0,3].plot(step,obs_val[3])
 
-    ax3[1,0].plot(step,obs_val[4])
-    ax3[1,1].plot(step,obs_val[5])
-    ax3[1,2].plot(step,obs_val[6])
-    ax3[1,3].plot(step,obs_val[7])
+#     ax3[1,0].plot(step,obs_val[4])
+#     ax3[1,1].plot(step,obs_val[5])
+#     ax3[1,2].plot(step,obs_val[6])
+#     ax3[1,3].plot(step,obs_val[7])
 
-    ax3[2,0].plot(step,obs_val[8])
-    ax3[2,1].plot(step,obs_val[9])
-    ax3[2,2].plot(step,obs_val[10])
-    ax3[2,3].plot(step,obs_val[11])
+#     ax3[2,0].plot(step,obs_val[8])
+#     ax3[2,1].plot(step,obs_val[9])
+#     ax3[2,2].plot(step,obs_val[10])
+#     ax3[2,3].plot(step,obs_val[11])
 
-    ax3[3,0].plot(step,obs_val[12])
-    ax3[3,1].plot(step,obs_val[13])
-    ax3[3,2].plot(step,obs_val[14])
-    ax3[3,3].plot(step,obs_val[15])
+#     ax3[3,0].plot(step,obs_val[12])
+#     ax3[3,1].plot(step,obs_val[13])
+#     ax3[3,2].plot(step,obs_val[14])
+#     ax3[3,3].plot(step,obs_val[15])
 
-    ax3[4,0].plot(step,obs_val[16])
-    ax3[4,1].plot(step,obs_val[17])
-    ax3[4,2].plot(step,obs_val[18])
-    ax3[4,3].plot(step,obs_val[19])
+#     ax3[4,0].plot(step,obs_val[16])
+#     ax3[4,1].plot(step,obs_val[17])
+#     ax3[4,2].plot(step,obs_val[18])
+#     ax3[4,3].plot(step,obs_val[19])
 
-    ax3[5,0].plot(step,obs_val[20])
-    ax3[5,1].plot(step,obs_val[21])
+#     ax3[5,0].plot(step,obs_val[20])
+#     ax3[5,1].plot(step,obs_val[21])
 
 
 
@@ -218,42 +218,42 @@ for episode in range(len(tb.obs)):
 #     ax4[2,1].plot(step,f_r)
 #     ax4[2,1].set(xlabel='step',ylabel='del M6')
 
-# outline = []
-# rewards = []
-# for episode in range(len(tb.obs)):
-#     if episode in outline: continue
-#     total_r = 0
-#     for step in range(len(tb.obs[episode])):
-#         total_r += tb.r[episode][step]
-#     print("reward : ",total_r)
-#     rewards.append(total_r)
+outline = []
+rewards = []
+for episode in range(len(tb.obs)):
+    if episode in outline: continue
+    total_r = 0
+    for step in range(len(tb.obs[episode])):
+        total_r += tb.r[episode][step]
+    print("reward : ",total_r)
+    rewards.append(total_r)
 
-# ex_rewards = []
-# for episode in range(len(expert.obs)):
-#     total_r = 0
-#     for step in range(len(expert.obs[episode])):
-#         total_r += expert.r[episode][step]
-#     ex_rewards.append(total_r)
+ex_rewards = []
+for episode in range(len(expert.obs)):
+    total_r = 0
+    for step in range(len(expert.obs[episode])):
+        total_r += expert.r[episode][step]
+    ex_rewards.append(total_r)
 
-# mean_r = np.mean(rewards)
-# mean_ex_r = np.mean(ex_rewards)
+mean_r = np.mean(rewards)
+mean_ex_r = np.mean(ex_rewards)
 
-# std_r = np.std(rewards)
-# std_ex_r = np.std(ex_rewards)
-# # import pdb;pdb.set_trace()
-# x_pos = np.arange(2)
-# r = [mean_ex_r, mean_r]
-# error = [std_ex_r,std_r]
+std_r = np.std(rewards)
+std_ex_r = np.std(ex_rewards)
+# import pdb;pdb.set_trace()
+x_pos = np.arange(2)
+r = [mean_ex_r, mean_r]
+error = [std_ex_r,std_r]
 
-# labels = ['Expert', 'IBC']
-# fig,ax = plt.subplots()
-# ax.bar(x_pos, r, yerr=error, align='center', alpha=0.5, ecolor='black', capsize=10)
-# ax.set_ylabel('Reward')
-# ax.set_xticks(x_pos)
-# ax.set_xticklabels(labels)
-# ax.yaxis.grid(True)
+labels = ['Expert', 'IBC']
+fig,ax = plt.subplots()
+ax.bar(x_pos, r, yerr=error, align='center', alpha=0.5, ecolor='black', capsize=10)
+ax.set_ylabel('Reward')
+ax.set_xticks(x_pos)
+ax.set_xticklabels(labels)
+ax.yaxis.grid(True)
 
-# plt.tight_layout()
+plt.tight_layout()
 
 
 
