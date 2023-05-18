@@ -16,94 +16,86 @@ sns.set()
 #                 /home/docker/irl_control_container/libraries/algorithms/ibc/data/particle/particel_dataset.npy
 #expert = np.load('/home/docker/irl_control_container/libraries/algorithms/ibc/data/particle_3d/particle_tri_dataset.npy',allow_pickle=True)
 
-expert_fname = '/home/docker/irl_control_container/data/expert_trajectories/quad_insert_v1/force/quad_insert_v1_force3.proto'
+expert_fname = '/home/docker/irl_control_container/data/expert_trajectories/quad_insert2_v9/quad_insert2_v9.proto'
 expert_list = proto_logger.extract_to_trajs(expert_fname)
 expert = TrajBatch.FromTrajs(expert_list)
-proto_fname = "/home/docker/irl_control_container/data/ibc_eval/quad_insert_v1/2023-05-17_01:06:17/Trajectories/algo=ibc,train_step=15000,run=0.proto"
+proto_fname = "/home/docker/irl_control_container/data/ibc_eval/quad_insert2_v9/2023-05-17_10:12:28/Trajectories/algo=ibc,train_step=12000,run=0.proto"
 traj_list = proto_logger.extract_to_trajs(proto_fname)
 tb = TrajBatch.FromTrajs(traj_list)
 
 # fig1,ax = plt.subplots(4)
 # fig2,ax2 = plt.subplots(4)
 
-# fig3,ax3 = plt.subplots(6,4)
-# # fig4,ax4 = plt.subplots(5,4)
+fig3,ax3 = plt.subplots(5,4)
+# fig4,ax4 = plt.subplots(5,4)
 
 # fig5 = plt.figure()
 # ax5 = plt.axes(projection='3d')
 
-# # fig1.suptitle("Expert policy left arm observations")
-# # fig2.suptitle("Expert policy right arm observations")
+# fig1.suptitle("Expert policy left arm observations")
+# fig2.suptitle("Expert policy right arm observations")
 
-# fig3.suptitle("IBC policy left arm observations")
-# # # fig4.suptitle("IBC policy right arm observations")
+fig3.suptitle("IBC policy left arm observations")
+# # fig4.suptitle("IBC policy right arm observations")
 
 # fig5.suptitle("IBC policy Trajectory")
 
-# outline = [] #np.arange(25,50)  # [5,7,12,16,17] #3d [14,6,7,17,12,13] #[5,7,12,16,17] #  35-45
+outline = [] #np.arange(25,50)  # [5,7,12,16,17] #3d [14,6,7,17,12,13] #[5,7,12,16,17] #  35-45
 
-# for episode in range(len(tb.obs)):
-#     if episode in outline: continue
-#     ee_x_l = []
-#     ee_y_l = []
-#     ee_z_l = []
-#     ee_x_r = []
-#     ee_y_r = []
-#     ee_z_r = []
-#     obs_val = [0]*41
-#     for i in range(41):
-#         obs_val[i] = []
-#     for step in range(len(tb.obs[episode])):
-#         # import pdb;pdb.set_trace()
-#         ee_x_l.append(tb.obs[episode][step][13])
-#         ee_y_l.append(tb.obs[episode][step][14])
-#         ee_z_l.append(tb.obs[episode][step][15])
+for episode in range(len(tb.obs)):
+    if episode in outline: continue
+    ee_x_l = []
+    ee_y_l = []
+    ee_z_l = []
+    ee_x_r = []
+    ee_y_r = []
+    ee_z_r = []
+    obs_val = [0]*28
+    for i in range(28):
+        obs_val[i] = []
+    for step in range(len(tb.obs[episode])):
+        # import pdb;pdb.set_trace()
+        ee_x_l.append(tb.obs[episode][step][0])
+        # ee_y_l.append(tb.obs[episode][step][14])
+        # ee_z_l.append(tb.obs[episode][step][15])
 
-#         ee_x_r.append(tb.obs[episode][step][35])
-#         ee_y_r.append(tb.obs[episode][step][36])
-#         ee_z_r.append(tb.obs[episode][step][37])
+        # ee_x_r.append(tb.obs[episode][step][35])
+        # ee_y_r.append(tb.obs[episode][step][36])
+        # ee_z_r.append(tb.obs[episode][step][37])
 
-#         for i in range(41):
-#             obs_val[i].append(tb.obs[episode][step][i])
-# #         r_r.append(tb.obs[episode][step][7])
-# #         # a_r.append(tb.obs[episode][step][14])
-# #         # b_r.append(tb.obs[episode][step][15])
-# #         # c_r.append(tb.obs[episode][step][16])
-# #         # d_r.append(tb.obs[episode][step][17])
-# #         # e_r.append(tb.obs[episode][step][18])
-# #         # f_r.append(tb.obs[episode][step][19])
-#     ax5.plot3D(ee_x_l,ee_y_l,ee_z_l)
-#     ax5.plot3D(ee_x_r,ee_y_r,ee_z_r)
+        for i in range(28):
+            obs_val[i].append(tb.obs[episode][step][i])
+
+    # ax5.plot3D(ee_x_l,ee_y_l,ee_z_l)
+    # ax5.plot3D(ee_x_r,ee_y_r,ee_z_r)
     
-#     step = np.arange(0,len(ee_x_l)) #len(ee_x)
+    step = np.arange(0,len(ee_x_l)) #len(ee_x)
 
-#     ax3[0,0].plot(step,obs_val[0])
-#     ax3[0,1].plot(step,obs_val[1])
-#     ax3[0,2].plot(step,obs_val[2])
-#     ax3[0,3].plot(step,obs_val[3])
+    ax3[0,0].plot(step,obs_val[0])
+    ax3[0,1].plot(step,obs_val[1])
+    ax3[0,2].plot(step,obs_val[2])
+    ax3[0,3].plot(step,obs_val[3])
 
-#     ax3[1,0].plot(step,obs_val[4])
-#     ax3[1,1].plot(step,obs_val[5])
-#     ax3[1,2].plot(step,obs_val[6])
-#     ax3[1,3].plot(step,obs_val[7])
+    ax3[1,0].plot(step,obs_val[4])
+    ax3[1,1].plot(step,obs_val[5])
+    ax3[1,2].plot(step,obs_val[6])
+    ax3[1,3].plot(step,obs_val[7])
 
-#     ax3[2,0].plot(step,obs_val[8])
-#     ax3[2,1].plot(step,obs_val[9])
-#     ax3[2,2].plot(step,obs_val[10])
-#     ax3[2,3].plot(step,obs_val[11])
+    ax3[2,0].plot(step,obs_val[8])
+    ax3[2,1].plot(step,obs_val[9])
+    ax3[2,2].plot(step,obs_val[10])
+    ax3[2,3].plot(step,obs_val[11])
 
-#     ax3[3,0].plot(step,obs_val[12])
-#     ax3[3,1].plot(step,obs_val[13])
-#     ax3[3,2].plot(step,obs_val[14])
-#     ax3[3,3].plot(step,obs_val[15])
+    ax3[3,0].plot(step,obs_val[12])
+    ax3[3,1].plot(step,obs_val[13])
+    ax3[3,2].plot(step,obs_val[14])
+    ax3[3,3].plot(step,obs_val[15])
 
-#     ax3[4,0].plot(step,obs_val[16])
-#     ax3[4,1].plot(step,obs_val[17])
-#     ax3[4,2].plot(step,obs_val[18])
-#     ax3[4,3].plot(step,obs_val[19])
+    ax3[4,0].plot(step,obs_val[16])
+    ax3[4,1].plot(step,obs_val[17])
+    ax3[4,2].plot(step,obs_val[18])
+    # ax3[4,3].plot(step,obs_val[19])
 
-#     ax3[5,0].plot(step,obs_val[20])
-#     ax3[5,1].plot(step,obs_val[21])
 
 
 
