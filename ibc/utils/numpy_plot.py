@@ -16,10 +16,10 @@ sns.set()
 #                 /home/docker/irl_control_container/libraries/algorithms/ibc/data/particle/particel_dataset.npy
 #expert = np.load('/home/docker/irl_control_container/libraries/algorithms/ibc/data/particle_3d/particle_tri_dataset.npy',allow_pickle=True)
 
-expert_fname = '/home/docker/irl_control_container/data/expert_trajectories/quad_insert2_v9/quad_insert2_v9.proto'
+expert_fname = '/home/docker/irl_control_container/data/expert_trajectories/quad_insert2_v11/quad_insert2_v11.proto'
 expert_list = proto_logger.extract_to_trajs(expert_fname)
 expert = TrajBatch.FromTrajs(expert_list)
-proto_fname = "/home/docker/irl_control_container/data/ibc_eval/quad_insert2_v9/2023-05-17_10:12:28/Trajectories/algo=ibc,train_step=12000,run=0.proto"
+proto_fname = "/home/docker/irl_control_container/data/ibc_eval/quad_insert2_v11/2023-05-30_08:14:15/Trajectories/algo=ibc,train_step=12000,run=0.proto"
 traj_list = proto_logger.extract_to_trajs(proto_fname)
 tb = TrajBatch.FromTrajs(traj_list)
 
@@ -43,6 +43,7 @@ fig3.suptitle("IBC policy left arm observations")
 outline = [] #np.arange(25,50)  # [5,7,12,16,17] #3d [14,6,7,17,12,13] #[5,7,12,16,17] #  35-45
 
 for episode in range(len(tb.obs)):
+    # import pdb;pdb.set_trace()
     if episode in outline: continue
     ee_x_l = []
     ee_y_l = []

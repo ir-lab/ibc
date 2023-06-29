@@ -126,6 +126,58 @@ class EvalActor():
       summary_interval=-1)  # -1 will make so never automatically writes.
     return eval_actor, success_metric
 
+  def get_checkpoint_eval_actor(self,
+                    policy,
+                    env_name,
+                    eval_env,
+                    train_step,
+                    eval_episodes,
+                    root_dir,
+                    viz_img,
+                    num_envs,
+                    strategy,
+                    summary_dir_suffix=''):
+    """Defines eval actor."""
+
+    eval_greedy_policy = policy
+
+    metrics = actor.eval_metrics(eval_episodes)
+    #import pdb;pdb.set_trace()
+    if env_name in tasks.D4RL_TASKS or env_name in tasks.GYM_TASKS:
+      #import pdb;pdb.set_trace()
+      success_metric = metrics[0]
+      if env_name in tasks.ADROIT_TASKS:
+        # Define custom eval success metric for Adroit tasks, since the rewards
+        # include reward shaping terms.
+        metrics += [
+            d4rl_metrics.D4RLSuccessMetric(
+                env=eval_env, buffer_size=eval_episodes)
+        ]
+    else:
+      env_metrics, success_metric = eval_env.get_metrics(eval_episodes)
+      metrics += env_metrics
+
+    summary_dir = os.path.join(root_dir, 'eval', summary_dir_suffix)
+
+    observers = []
+    # Adds a log when an episode is done, allows seeing eval time in the logs.
+    observers += [self.log_episode_complete]
+
+    if viz_img and 'Particle' in env_name:
+      eval_env.set_img_save_dir(summary_dir)
+      observers += [eval_env.save_image]
+
+    eval_actor = actor.Actor(
+      eval_env,
+      eval_greedy_policy,
+      train_step,
+      observers=observers,
+      metrics=metrics,
+      summary_dir=summary_dir,
+      episodes_per_run=1,  # we are doing seeding, need to handle ourselves.
+      summary_interval=-1)  # -1 will make so never automatically writes.
+    return eval_actor, success_metric
+
 
 
 

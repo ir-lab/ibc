@@ -6,8 +6,8 @@ from ibc.environments.d4rl import car_oracles
 from tf_agents.drivers import py_driver
 from tf_agents.environments import suite_gym
 from tf_agents.specs import tensor_spec
-from proto_tools.build.py.trajectory_pb2 import floatList, multiFloatList, trajectory
-from proto_tools.build.py import trajectory_pb2
+from utils.proto_tools.build.py.trajectory_pb2 import floatList, multiFloatList, trajectory
+from utils.proto_tools.build.py import trajectory_pb2
 import numpy as np
 
 # dataset_path = '/home/docker/irl_control_container/libraries/algorithms/ibc/data/d4rl/car2/2d_oracle_car_3.tfrecord'
@@ -19,7 +19,7 @@ import numpy as np
 # dataset_eval_fraction = 0.0
 # flatten_action = True
 # _test_path = '/home/docker/irl_control_container/libraries/algorithms/ibc'
-# proto_file = '/home/docker/irl_control_container/data/expert_trajectories/mountaincar_continuous.proto'
+proto_file = '/home/docker/irl_control_container/data/expert_trajectories/quad_insert2_v11_test/quad_insert2_v11_test.proto'
 
 # env_name = 'MountainCarContinuous-v0'
 # env = suite_gym.load(env_name)
@@ -31,10 +31,12 @@ import numpy as np
 #         compress_image=True,
 #         image_quality=95)
 
-# # f = open(proto_file, "rb")
-# # traj = trajectory()
-# # traj.ParseFromString(f.read())
-# # f.close()
+f = open(proto_file, "rb")
+traj = trajectory()
+traj.ParseFromString(f.read())
+f.close()
+# import pdb;pdb.set_trace()
+
 # # num_trajs, max_len = len(traj.lengths), max(traj.lengths)
 # # action_dim = len(traj.actions[0].sub_lists)
 # # obs_dim = len(traj.observations[0].sub_lists)
@@ -83,16 +85,17 @@ def _bytes_feature(value):
   return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
 def serialize_example(action,discount,next_step_type,observation,reward,step_type):
-        feature = {
+        Trajectory = {
                 "action": _float_feature(action),
-                "discount": _float_feature(1.0),
-                "next_step_type": _bytes_feature(next_step_type),
+                "discount": _float_feature(0),
+                "next_step_type": _float_feature(next_step_type),
                 "observation": _float_feature(observation),
                 "reward": _float_feature(reward),
-                "step_type": _bytes_feature(step_type),
+                "step_type": _float_feature(step_type),
         }
 
         example_proto = tf.train.Example(features=tf.train.Features(feature=feature))
         return example_proto
 
-test = serialize_example(0.5,1,b'1',[0.3,0.6],-0.85,b'0')
+serialized_example = serialize_example(5,0, 1, 65, -1,0)
+import pdb;pdb.set_trace()

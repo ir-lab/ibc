@@ -12,7 +12,7 @@ import shutil
 import numpy as np
 import calendar
 import time
-import random
+import math
 
 from absl import app
 from absl import flags
@@ -119,21 +119,24 @@ class TFRecorder(object):
       flat_data = tf.nest.flatten(data)
       tf.numpy_function(self.write, flat_data, [], name='encoder_observer')
 
+def roundup(x):
+  return int(math.ceil((x+1)/50.0)*50)
+
 def export_to_tfrecord(proto_file):
   print("Exporting : ",proto_file)
   f = open(proto_file, "rb")
   traj = proto_trajectory()
   traj.ParseFromString(f.read())
   f.close()
-  # import pdb; pdb.set_trace()
-  #hash = hashids.encode(calendar.timegm(time.gmtime())+random.randint(0,1000))
-  file_path = tfrecord_path + f".tfrecord"
-  recorder = TFRecorder(
-            file_path,
-            dataspec,
-            py_mode=True,
-            compress_image=True)
+
   for idx in range(len(traj.observations)):
+    batch = roundup(idx)
+    file_path = tfrecord_path + f"{batch}.tfrecord"
+    recorder = TFRecorder(
+              file_path,
+              dataspec,
+              py_mode=True,
+              compress_image=True)
     obs = np.vstack([x.value for x in traj.observations[idx].sub_lists]).T
     act = np.vstack([x.value for x in traj.actions[idx].sub_lists]).T
     # import pdb;pdb.set_trace()
@@ -161,10 +164,10 @@ def export_to_tfrecord(proto_file):
                             discount=np.array(1,dtype=np.float32))
       recorder(tensor_traj)
 
-tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/quad_insert_v1/quad_insert_v1_force3"
+tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/quad_insert2_v11_test/batch_test"
 
-spec_path= "/home/docker/irl_control_container/libraries/algorithms/ibc/data/quad_insert_v1/quad_insert_force3.pbtxt"
-dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/quad_insert_v1/quad_insert_v1_force3.proto"
+spec_path= "/home/docker/irl_control_container/libraries/algorithms/ibc/data/quad_insert2_v9/quad_insert.pbtxt"
+dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/quad_insert2_v11_old/quad_insert2_v11.proto"
 dataspec = tensor_spec.from_pbtxt_file(spec_path)
 
 proto_files = tf.io.gfile.glob(dataset_path)

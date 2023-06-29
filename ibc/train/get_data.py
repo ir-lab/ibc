@@ -18,6 +18,9 @@
 from ibc.data import dataset as x100_dataset_tools
 import tensorflow as tf
 
+def get_max_shards(x):
+  return ((x-1)//50) + 1
+
 
 def get_data_fns(dataset_path,
                  sequence_length,
@@ -27,11 +30,17 @@ def get_data_fns(dataset_path,
                  dataset_eval_fraction,
                  flatten_action,
                  norm_function=None,
-                 max_data_shards=-1):
+                 max_trajs=-1):
   """Gets train and eval datasets."""
 
   # Helper function for creating train and eval data.
   def create_train_and_eval_fns():
+    if max_trajs != -1:
+      if max_trajs % 50 != 0:
+        logging.info('Max trajectories should be a multiples of 50, rounding up to the nearest 50 trajesctories')
+      max_data_shards = get_max_shards(max_trajs)
+    else:
+      max_data_shards = max_trajs
     train_data, eval_data = x100_dataset_tools.create_sequence_datasets(
         dataset_path,
         sequence_length,
@@ -40,7 +49,6 @@ def get_data_fns(dataset_path,
         for_rnn=for_rnn,
         eval_fraction=dataset_eval_fraction,
         max_data_shards=max_data_shards)
-
     def flatten_and_cast_action(action):
       flat_actions = tf.nest.flatten(action)
       flat_actions = [tf.cast(a, tf.float32) for a in flat_actions]

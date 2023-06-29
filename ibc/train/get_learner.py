@@ -28,7 +28,7 @@ def get_learner(loss_type,
                 train_data_fn,
                 fused_train_steps,
                 strategy,
-                checkpoint_interval=5000):
+                checkpoint_interval=500):
   """Defines BC learner."""
   # Create the policy saver which saves the initial model now, then it
   # periodically checkpoints the policy weights.
@@ -48,7 +48,7 @@ def get_learner(loss_type,
       saved_model_dir,
       agent,
       train_step,
-      interval=1000,
+      interval=checkpoint_interval,
       extra_concrete_functions=extra_concrete_functions,
       use_nest_path_signatures=False,
       save_greedy_policy=loss_type != 'mdn')
