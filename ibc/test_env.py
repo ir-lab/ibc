@@ -10,7 +10,7 @@ import time
 #         max_episode_steps=20000,
 #     )
 start_time = time.time()
-env = gym.make('quad_insert_v1')
+env = gym.make('quad_insert2_v11')
 export_dir = "/home/docker/irl_control_container/libraries/algorithms/ibc/gif"
 export_prefix = 'test_run'
 export_suffix = 'init'
@@ -28,7 +28,6 @@ for i in range(1000):
         obs = env.reset()
         export_suffix = str(i)
         env.set_gif_recording(export_dir,export_prefix,export_suffix)
-        print("Obs : ",obs)
     #import pdb;pdb.set_trace()  
     # print("Action : ",action)
     # print("Observation : ",obs)

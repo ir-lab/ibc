@@ -92,7 +92,7 @@ def evaluate(num_episodes,
              sequence_length = 2,
              goal_tolerance = 0.02,
              num_envs=1,
-             eval_episodes=1,
+             eval_episodes=10,
              strategy=None,):
   """Evaluates the given policy for n episodes."""
   
@@ -119,12 +119,9 @@ def evaluate(num_episodes,
                                                env.action_spec())
 
 
-  root_dir = '/home/docker/irl_control_container/data/ibc_eval/'
-  root_dir = os.path.join(root_dir, env_name)
-  current_time = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
-  root_dir = os.path.join(root_dir, current_time)
+  root_dir = '/home/docker/irl_control_container/data/ibc_eval/quad_insert2_v11/2023-06-29_03:48:13'
   proto_path = os.path.join(root_dir,"Trajectories")
-  os.makedirs(proto_path)
+  #os.makedirs(proto_path)
 
   if not strategy:
       strategy = tf.distribute.get_strategy()
@@ -162,13 +159,13 @@ def evaluation_step(eval_episodes, eval_env, eval_actor, train_step,name_scope_s
   with tf.name_scope('eval' + name_scope_suffix):
     # This will eval on seeds:
     # [0, 1, ..., eval_episodes-1]
-    export_dir = "/home/docker/irl_control_container/libraries/algorithms/ibc/gif/quad_insert2_v11"
-    export_prefix = 'quad_insert2_v11'
+    export_dir = "/home/docker/irl_control_container/data/ibc_eval/quad_insert2_v11/2023-06-29_08:18:06/gif"
+    export_prefix = 'quad_insert2_v11_150'
     for eval_seed in range(eval_episodes):
       eval_env.seed(eval_seed)
       print("seed : ",eval_seed)      ## DO NOT REMOVE THIS PRINT
       eval_actor.reset()  # With the new seed, the env actually needs reset.
-      eval_env.set_gif_recording(export_dir,export_prefix,str(3))
+      eval_env.set_gif_recording(export_dir,export_prefix,str(eval_seed))
       eval_actor.run()
       eval_env.export_gif_recording()
 

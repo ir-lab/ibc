@@ -128,11 +128,22 @@ def export_to_tfrecord(proto_file):
   traj = proto_trajectory()
   traj.ParseFromString(f.read())
   f.close()
+  batch = 50
+  print("New recorder with %d batch",new_batch)
+  file_path = tfrecord_path + f"_{batch}.tfrecord"
+  recorder = TFRecorder(
+            file_path,
+            dataspec,
+            py_mode=True,
+            compress_image=True)
 
   for idx in range(len(traj.observations)):
-    batch = roundup(idx)
-    file_path = tfrecord_path + f"{batch}.tfrecord"
-    recorder = TFRecorder(
+    new_batch = roundup(idx)
+    if new_batch != batch:
+      print("New recorder with %d batch",new_batch)
+      batch = new_batch
+      file_path = tfrecord_path + f"_{batch}.tfrecord"
+      recorder = TFRecorder(
               file_path,
               dataspec,
               py_mode=True,
@@ -164,10 +175,10 @@ def export_to_tfrecord(proto_file):
                             discount=np.array(1,dtype=np.float32))
       recorder(tensor_traj)
 
-tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/quad_insert2_v11_test/batch_test"
+tfrecord_path = "/home/docker/irl_control_container/libraries/algorithms/ibc/data/quad_insert2_v11/quad_insert2_v11"
 
 spec_path= "/home/docker/irl_control_container/libraries/algorithms/ibc/data/quad_insert2_v9/quad_insert.pbtxt"
-dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/quad_insert2_v11_old/quad_insert2_v11.proto"
+dataset_path = "/home/docker/irl_control_container/data/expert_trajectories/quad_insert2_v11/quad_insert2_v11.proto"
 dataspec = tensor_spec.from_pbtxt_file(spec_path)
 
 proto_files = tf.io.gfile.glob(dataset_path)
