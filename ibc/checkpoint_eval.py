@@ -4,6 +4,7 @@ import functools
 import os
 import shutil
 import datetime
+import signal
 
 from absl import app
 from absl import flags
@@ -58,10 +59,14 @@ flags.DEFINE_bool('flatten_env', False,
                   'If True the environment observations are flattened.')
 flags.DEFINE_bool('shared_memory', False,
                   'If True the connection to pybullet uses shared memory.')
+flags.DEFINE_string('model_path', None,
+                    'Path to the model_policy to evaluate.')
 flags.DEFINE_string('saved_model_path', None,
                     'Path to the saved_model policy to eval.')
 flags.DEFINE_string('checkpoint_path', None,
                     'Path to the checkpoint to evaluate.')
+flags.DEFINE_string('checkpoint', None,
+                    'checkpoint to evaluate.')
 flags.DEFINE_enum('policy', None, [
     'random', 'oracle_reach', 'oracle_push', 'oracle_reach_normalized',
     'oracle_push_normalized', 'particle_green_then_blue'
@@ -73,14 +78,31 @@ flags.DEFINE_string(
 flags.DEFINE_integer('replicas', None,
                      'Number of parallel replicas generating evaluations.')
 
+MAX_RUNTIME_SECONDS = 900
 
-def evaluate(num_episodes,
-             task,
+class timeout:
+    def __init__(self, seconds=1, error_message='Timeout Error'):
+        self.seconds = seconds
+        self.error_message = error_message
+        self.failured = False
+    def handle_timeout(self, signum, frame):
+        self.failured = True
+        raise TimeoutError(self.error_message)
+    def __enter__(self):
+        signal.signal(signal.SIGALRM, self.handle_timeout)
+        signal.alarm(self.seconds)
+    def __exit__(self, type, value, traceback):
+        signal.alarm(0)
+
+
+def evaluate(task,
              use_image_obs,
              shared_memory,
              flatten_env,
+             model_path=None,
              saved_model_path=None,
              checkpoint_path=None,
+             checkpoint=None,
              static_policy=None,
              dataset_path=None,
              history_length=None,
@@ -103,9 +125,15 @@ def evaluate(num_episodes,
 
         
 
-  if saved_model_path and static_policy:
+  if model_path and static_policy:
     raise ValueError(
         'Only pass in either a `saved_model_path` or a `static_policy`.')
+
+  if model_path:
+    if not checkpoint:
+      raise ValueError('Must provide a `checkpoint` with a model.')
+    saved_model_path = str(model_path + "/policies/greedy_policy")
+    checkpoint_path = str(model_path + "/policies/checkpoints/policy_checkpoint_"+ checkpoint.zfill(10))
 
   if saved_model_path:
     if not checkpoint_path:
@@ -118,9 +146,7 @@ def evaluate(num_episodes,
       policy = random_py_policy.RandomPyPolicy(env.time_step_spec(),
                                                env.action_spec())
 
-
-  root_dir = '/home/docker/irl_control_container/data/ibc_eval/quad_insert2_v11/2023-06-29_03:48:13'
-  proto_path = os.path.join(root_dir,"Trajectories")
+  proto_path = os.path.join(model_path,"Trajectories")
   #os.makedirs(proto_path)
 
   if not strategy:
@@ -136,7 +162,7 @@ def evaluate(num_episodes,
                 env,
                 train_step,
                 eval_episodes,
-                root_dir,
+                model_path,
                 viz_img,
                 num_envs,
                 strategy,
@@ -148,8 +174,8 @@ def evaluate(num_episodes,
               eval_actor,
               train_step,
               name_scope_suffix=f'_{env_name}')
-    run = 1
-    proto_name = os.path.join(proto_path,f"algo=ibc,train_step={train_step.numpy()},run={run}")
+    run = 2
+    proto_name = os.path.join(proto_path,f"algo=ibc,checkpoint={checkpoint},run={run}")
     eval_actor_class.write_to_protobuf(proto_name)
 
 
@@ -162,11 +188,21 @@ def evaluation_step(eval_episodes, eval_env, eval_actor, train_step,name_scope_s
     export_dir = "/home/docker/irl_control_container/data/ibc_eval/quad_insert2_v11/2023-06-29_08:18:06/gif"
     export_prefix = 'quad_insert2_v11_150'
     for eval_seed in range(eval_episodes):
-      eval_env.seed(eval_seed)
-      print("seed : ",eval_seed)      ## DO NOT REMOVE THIS PRINT
-      eval_actor.reset()  # With the new seed, the env actually needs reset.
-      eval_env.set_gif_recording(export_dir,export_prefix,str(eval_seed))
-      eval_actor.run()
+      try:
+        with timeout(seconds=MAX_RUNTIME_SECONDS):
+          eval_env.seed(eval_seed)
+          print("seed : ",eval_seed) ## DO NOT REMOVE THIS PRINT
+          eval_actor.reset()  # With the new seed, the env actually needs reset.
+          eval_env.set_gif_recording(export_dir,export_prefix,str(eval_seed))
+          eval_actor.run()
+      except TimeoutError as e:
+        print(f"Eval Failed with: {e}. Trying again...")
+        eval_env.seed(eval_seed)
+        eval_env.reset()
+        print("seed : ",eval_seed) ## DO NOT REMOVE THIS PRINT
+        eval_actor.reset()  # With the new seed, the env actually needs reset.
+        eval_env.set_gif_recording(export_dir,export_prefix,str(eval_seed))
+        eval_actor.run()
       eval_env.export_gif_recording()
 
     eval_actor.log_metrics()
@@ -180,19 +216,21 @@ def main(_):
   gin.parse_config_files_and_bindings(flags.FLAGS.gin_file,
                                       flags.FLAGS.gin_bindings)
   evaluate(
-    num_episodes=flags.FLAGS.num_episodes,
     task=flags.FLAGS.task,
     use_image_obs=flags.FLAGS.use_image_obs,
     shared_memory=flags.FLAGS.shared_memory,
     flatten_env=flags.FLAGS.flatten_env,
+    model_path=flags.FLAGS.model_path,
     saved_model_path=flags.FLAGS.saved_model_path,
     checkpoint_path=flags.FLAGS.checkpoint_path,
+    checkpoint=flags.FLAGS.checkpoint,
     static_policy=flags.FLAGS.policy,
     dataset_path=flags.FLAGS.dataset_path,
     history_length=flags.FLAGS.history_length,
     video=flags.FLAGS.video,
     viz_img=flags.FLAGS.viz_img,
     output_path=flags.FLAGS.output_path,
+    eval_episodes=flags.FLAGS.num_episodes
     )
 
 

@@ -116,7 +116,7 @@ def train_eval(
 		strategy=None,
 		# Use this to sweep amount of tfrecords going into training.
 		# -1 for 'use all'.
-		max_trajs=-1,
+		max_trajs=200,
 		use_warmup=False,
 		runs=1):
 	"""Trains a BC agent on the given datasets."""
@@ -174,7 +174,7 @@ def train_eval(
 				dataset_eval_fraction,
 				flatten_action,
 				norm_function=norm_train_data_fn,
-				max_trajs=100)
+				max_trajs=max_trajs)
 
 		# Create normalization layers for obs and action.
 		with strategy.scope():
