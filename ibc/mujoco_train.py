@@ -75,6 +75,8 @@ flags.DEFINE_bool('multi_gpu', False,
 flags.DEFINE_enum('device_type', 'gpu', ['gpu', 'tpu'],
 									'Where to perform training.')
 
+flags.DEFINE_integer('limit_trajs', -1, 'Tag for the experiment. Appended to the root_dir.')
+
 FLAGS = flags.FLAGS
 VIZIER_KEY = 'success'
 
@@ -116,7 +118,7 @@ def train_eval(
 		strategy=None,
 		# Use this to sweep amount of tfrecords going into training.
 		# -1 for 'use all'.
-		max_trajs=-1,
+		limit_trajs=-1,
 		use_warmup=False,
 		runs=1):
 	"""Trains a BC agent on the given datasets."""
@@ -134,8 +136,6 @@ def train_eval(
 	if add_time:
 		current_time = datetime.datetime.now().strftime('%Y-%m-%d_%H:%M:%S')
 		root_dir = os.path.join(root_dir, current_time)
-	proto_path = os.path.join(root_dir,"Trajectories")
-	os.makedirs(proto_path)
 
 	for run in range(runs):
 		# Define eval env.
@@ -147,6 +147,11 @@ def train_eval(
 
 		obs_tensor_spec, action_tensor_spec, time_step_tensor_spec = (
 				spec_utils.get_tensor_specs(eval_env))
+		
+		obs_tensor_spec = tensor_spec.BoundedTensorSpec(shape=obs_tensor_spec.shape, dtype=tf.float32, minimum=obs_tensor_spec.minimum, maximum=obs_tensor_spec.maximum, name=obs_tensor_spec.name)
+		
+		action_tensor_spec = tensor_spec.BoundedTensorSpec(shape=action_tensor_spec.shape, dtype=tf.float32, minimum=action_tensor_spec.minimum, maximum=action_tensor_spec.maximum, name=action_tensor_spec.name)
+		
 		# Compute normalization info from training data.
 		create_train_and_eval_fns_unnormalized = data_module.get_data_fns(
 				dataset_path,
@@ -156,7 +161,7 @@ def train_eval(
 				for_rnn,
 				dataset_eval_fraction,
 				flatten_action,
-				max_trajs=max_trajs)
+				max_trajs=limit_trajs)
 		train_data, _ = create_train_and_eval_fns_unnormalized()
 		(norm_info, norm_train_data_fn) = normalizers_module.get_normalizers(
 				train_data, batch_size, env_name)
@@ -174,7 +179,7 @@ def train_eval(
 				dataset_eval_fraction,
 				flatten_action,
 				norm_function=norm_train_data_fn,
-				max_trajs=100)
+				max_trajs=limit_trajs)
 
 		# Create normalization layers for obs and action.
 		with strategy.scope():
