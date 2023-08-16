@@ -19,7 +19,24 @@ IBC_TASKS = ['REACH', 'PUSH', 'INSERT', 'PARTICLE', 'PUSH_DISCONTINUOUS',
              'PUSH_MULTIMODAL']
 ADROIT_TASKS = ['pen-human-v0', 'hammer-human-v0', 'door-human-v0',
                 'relocate-human-v0',]
-GYM_TASKS = ['MountainCarContinuous-v0','quad_insert2_v9','quad_insert2_v10','quad_insert2_v11']
+GYM_TASKS = ['MountainCarContinuous-v0',
+             'quad_insert2_v9',
+             'quad_insert2_v10',
+             'quad_insert2_v11',
+             'quad_insert_a0o0',
+             'quad_insert_a0o0eval',
+             'quad_insert_a0oL',
+             'quad_insert_a0oLeval',
+             'quad_insert_a0oM',
+             'quad_insert_a0oMeval',
+             'quad_insert_aLo0',
+             'quad_insert_aLo0eval',
+             'quad_insert_aLoL',
+             'quad_insert_aLoLeval',
+             'quad_insert_aLoM',
+             'quad_insert_aLoMeval'
+             ]
+
 D4RL_TASKS = ['antmaze-large-diverse-v0',
               'antmaze-large-play-v0',
               'antmaze-medium-diverse-v0',
